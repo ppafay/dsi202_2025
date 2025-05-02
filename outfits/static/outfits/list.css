@@ -1,0 +1,119 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.outfit-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.outfit-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.outfit-card h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.outfit-card p {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.outfit-card .button,
+.outfit-card button[disabled] {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+}
+
+.outfit-card .button {
+    background-color: #28a745;
+    color: white;
+}
+
+.outfit-card .button:hover {
+    background-color: #1e7e34;
+}
+
+.outfit-card button[disabled] {
+    background-color: #ccc;
+    color: #555;
+    cursor: not-allowed;
+}
+
+/* ปรับ layout ให้แสดง outfit เป็น grid (ถ้าต้องการ) */
+/*
+.outfit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.outfit-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+}
+
+.outfit-card img {
+    margin-bottom: 10px;
+}
+
+.outfit-card h3 {
+    margin-top: 10px;
+}
+*/

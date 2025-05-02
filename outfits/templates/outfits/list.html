@@ -1,5 +1,7 @@
 {% extends 'outfits/base.html' %}
+{% load static %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'outfits/home.css' %}">
 <h2>Outfit List</h2>
 <form method="get" action="{% url 'outfit-search' %}">
   <input type="text" name="q" placeholder="ค้นหาชุด">
