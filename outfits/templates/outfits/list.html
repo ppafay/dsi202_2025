@@ -1,0 +1,21 @@
+{% extends 'outfits/base.html' %}
+{% block content %}
+<h2>Outfit List</h2>
+<form method="get" action="{% url 'outfit-search' %}">
+  <input type="text" name="q" placeholder="ค้นหาชุด">
+  <button type="submit">ค้นหา</button>
+</form>
+{% for outfit in outfits %}
+<div class="outfit-card">
+  <img src="{{ outfit.image.url }}" width="250">
+  <h3>{{ outfit.name }}</h3>
+  <p>{{ outfit.description }}</p>
+  <p>ราคา: {{ outfit.price }} บาท</p> <!-- เพิ่มตรงนี้ -->
+  {% if outfit.is_rented %}
+    <button disabled>ถูกเช่าแล้ว</button>
+  {% else %}
+    <a href="{% url 'outfit-detail' outfit.pk %}">ดูรายละเอียด</a>
+  {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,36 @@
+body {
+  background-color: #FAF9F6;
+  font-family: Poppins, sans-serif;
+  color: #2E2E2E;
+}
+header {
+  background-color: #5C8374;
+  color: #FAF9F6;
+  padding: 1rem;
+}
+h1 {
+  margin: 0;
+}
+nav a {
+  color: #FAF9F6;
+  margin: 0 10px;
+  text-decoration: none;
+}
+.container {
+  padding: 2rem;
+}
+.outfit-card {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+button {
+  background-color: #D8A7B1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
