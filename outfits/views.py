@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .models import Outfit
 from .forms import OutfitForm, RentForm
+from .models import Product, CartItem, Cart, Outfit
 
 def home(request):
     return render(request, 'outfits/home.html')
@@ -47,3 +48,22 @@ def create_outfit(request):
     else:
         form = OutfitForm()
     return render(request, 'outfits/rental_form.html', {'form': form})
+
+# shop/views.py
+def cart_view(request):
+    # ... ดึงข้อมูลตะกร้าสินค้าจาก session หรือ database ...
+    cart = Cart.objects.first()  # ดึงตะกร้าแรกมาแสดงก่อน (ตัวอย่าง)
+    return render(request, 'shop/cart.html', {'cart': cart})
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    # ... เพิ่มสินค้าลงในตะกร้า ...
+    return redirect('cart')  # Redirect ไปยังหน้าตะกร้าสินค้า
+
+def update_cart(request, item_id):
+    # ... อัปเดตจำนวนสินค้า ...
+    return redirect('cart')
+
+def remove_from_cart(request, item_id):
+    # ... ลบสินค้าออกจากตะกร้า ...
+    return redirect('cart')

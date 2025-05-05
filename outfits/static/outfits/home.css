@@ -2,27 +2,30 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
-    padding: 0;
+    padding: 20px; /* เพิ่ม padding ให้ body เพื่อไม่ให้ขอบของเนื้อหาชิดขอบหน้าจอเกินไป */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: center; /* จัดปุ่มและ heading ให้อยู่ตรงกลางแนวนอน */
+    justify-content: flex-start; /* เปลี่ยนเป็น flex-start เพื่อให้เนื้อหาเริ่มต้นจากด้านบน */
     min-height: 100vh;
 }
 
 h2 {
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* เพิ่ม margin ด้านล่าง heading เพื่อสร้างช่องว่าง */
+    text-align: center; /* จัด heading ให้อยู่ตรงกลาง */
 }
 
 .button {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 12px 24px; /* เพิ่มขนาด padding เล็กน้อย */
     background-color: #007bff;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 8px; /* เพิ่มความโค้งมนของขอบเล็กน้อย */
     transition: background-color 0.3s ease;
+    font-size: 16px; /* กำหนดขนาดตัวอักษรให้เหมาะสม */
+    margin-bottom: 15px; /* เพิ่ม margin ด้านล่างปุ่มหากมีองค์ประกอบอื่นต่อมา */
 }
 
 .button:hover {
