@@ -1,16 +1,30 @@
-{% extends 'outfits/base.html' %}
-{% block content %}
-<h2>{{ outfit.name }}</h2>
-<img src="{{ outfit.image.url }}" width="300">
-<p>{{ outfit.description }}</p>
-<p>ราคาต่อวัน: {{ outfit.price|floatformat:2 }} บาท</p>
-{% if outfit.is_rented %}
-  <button disabled>ถูกเช่าแล้ว</button>
-{% else %}
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">เช่าชุดนี้</button>
-  </form>
-{% endif %}
-{% endblock %}
+{% comment %} project/main/dsi202/outfits/templates/outfits/list.html {% endcomment %}
+{# ... #}
+<div class="outfit-grid">
+    {% for outfit in outfits %}
+    <div class="outfit-card">
+        <a href="{% url 'outfit-detail' outfit.id %}">
+            {% if outfit.image %}
+                <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
+            {% else %}
+                <img src="{% static 'outfits/images/placeholder.png' %}" alt="No image available">
+            {% endif %}
+        </a>
+        <div class="card-content"> {# <--- เพิ่ม div นี้ #}
+            <a href="{% url 'outfit-detail' outfit.id %}" style="text-decoration: none;"> {# ทำให้ชื่อสินค้าเป็นลิงก์ด้วย #}
+                <h3>{{ outfit.name }}</h3>
+            </a>
+            <p>Price: ฿{{ outfit.price|floatformat:2 }}</p>
+            <form method="post" action="{% url 'add_to_cart' outfit.id %}">
+                {% csrf_token %}
+                <label for="quantity_{{ outfit.id }}">Quantity:</label>
+                <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div> {# <--- ปิด div นี้ #}
+    </div>
+    {% empty %}
+    <p class="no-outfits-found">No outfits found.</p> {# เพิ่ม class ให้ styling ง่ายขึ้น #}
+    {% endfor %}
+</div>
+{# ... #}

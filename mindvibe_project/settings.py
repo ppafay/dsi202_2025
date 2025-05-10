@@ -36,19 +36,19 @@ ROOT_URLCONF = 'mindvibe_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'], # <--- บรรทัดนี้
+        'APP_DIRS': True,  # สำคัญ: Django จะค้นหา templates ใน directory 'templates' ของแต่ละแอป
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'outfits.context_processors.cart_context', # ถ้าคุณสร้าง context processor สำหรับ cart
             ],
         },
     },
 ]
-
 WSGI_APPLICATION = 'mindvibe_project.wsgi.application'
 
 # ฐานข้อมูล (ใช้ SQLite)

@@ -1,119 +1,144 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f8f8;
-    margin: 0;
-    padding: 20px;
-}
+/* project/main/dsi202/outfits/static/outfits/list.css */
 
-h2 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-form {
+/* ... (สไตล์ form ค้นหาเดิม ถ้ามี) ... */
+form { /* สไตล์ฟอร์มค้นหา */
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 2.5rem; /* เพิ่มระยะห่าง */
+    max-width: 600px; /* กำหนดความกว้างสูงสุด */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px 0 0 5px;
+input[type="text"] { /* (ย้ายมาจาก styles.css ถ้าต้องการให้เฉพาะเจาะจง) */
+    padding: 12px 15px; /* ปรับ padding */
+    border: 1px solid #E0E0E0;
+    border-radius: 8px 0 0 8px; /* ปรับมุม */
     flex-grow: 1;
-    max-width: 400px;
+    font-size: 1rem;
+}
+input[type="text"]:focus {
+    border-color: #A7D7C5; /* สีเดียวกับ header */
+    box-shadow: 0 0 0 2px rgba(167, 215, 197, 0.3);
+    outline: none;
 }
 
-button[type="submit"] {
-    background-color: #007bff;
+button[type="submit"] { /* (ย้ายมาจาก styles.css ถ้าต้องการให้เฉพาะเจาะจง) */
+    background-color: #A7D7C5; /* สีเดียวกับ header */
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 0 5px 5px 0;
+    padding: 12px 20px;
+    border-radius: 0 8px 8px 0; /* ปรับมุม */
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 1rem;
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #8BBBAF; /* สีเข้มขึ้นเล็กน้อย */
 }
 
-.outfit-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
 
-.outfit-card img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.outfit-card h3 {
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 5px;
-}
-
-.outfit-card p {
-    color: #666;
-    margin-bottom: 8px;
-}
-
-.outfit-card .button,
-.outfit-card button[disabled] {
-    display: inline-block;
-    padding: 8px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-    font-size: 0.9em;
-}
-
-.outfit-card .button {
-    background-color: #28a745;
-    color: white;
-}
-
-.outfit-card .button:hover {
-    background-color: #1e7e34;
-}
-
-.outfit-card button[disabled] {
-    background-color: #ccc;
-    color: #555;
-    cursor: not-allowed;
-}
-
-/* ปรับ layout ให้แสดง outfit เป็น grid (ถ้าต้องการ) */
-/*
+/* เปิดการใช้งาน Grid Layout */
 .outfit-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    /* กำหนดให้มีจำนวนคอลัมน์ที่ปรับตามขนาดหน้าจอ */
+    /* minmax(300px, 1fr) หมายถึง คอลัมน์กว้างอย่างน้อย 300px และขยายได้เท่าๆ กัน */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; /* ระยะห่างระหว่าง card */
+    padding: 0; /* เอา padding ออกถ้า .container มีแล้ว */
 }
 
 .outfit-card {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: left;
+    background-color: #FFFFFF;
+    border-radius: 12px; /* เพิ่มความโค้งมน */
+    padding: 0; /* เอา padding ออก จะไปกำหนดใน card-content แทน */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.07); /* เงาที่ดูดีขึ้น */
+    display: flex;
+    flex-direction: column; /* ให้เนื้อหาเรียงจากบนลงล่าง */
+    overflow: hidden; /* ป้องกันไม่ให้ content เกิน card */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.outfit-card:hover {
+    transform: translateY(-5px); /* เอฟเฟกต์ลอยขึ้นเล็กน้อย */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.outfit-card a { /* ทำให้ทั้ง card เป็น clickable หรือเฉพาะรูป */
+    text-decoration: none;
+    color: inherit; /* ให้สีตัวอักษรเป็นไปตามที่กำหนดใน h3, p */
 }
 
 .outfit-card img {
-    margin-bottom: 10px;
+    width: 100%; /* ให้รูปเต็มความกว้างของ card */
+    height: 250px; /* กำหนดความสูงของรูป (ปรับตามความเหมาะสม) */
+    object-fit: cover; /* ให้รูปภาพเต็มพื้นที่โดยไม่เสียสัดส่วน */
+    border-radius: 0; /* เอามุมโค้งของรูปออก ถ้าย้ายไปใส่ที่ card */
+    /* border-bottom: 1px solid #EEEEEE; */ /* เส้นคั่นบางๆ ใต้รูป (ถ้าชอบ) */
+}
+
+.outfit-card .card-content { /* สร้าง div ใหม่ครอบ h3, p, form ใน HTML หรือปรับ padding ตรงนี้ */
+    padding: 1.5rem;
+    text-align: left; /* ปรับให้ชิดซ้าย */
+    flex-grow: 1; /* ให้ส่วนนี้ขยายเต็มพื้นที่ที่เหลือ */
+    display: flex;
+    flex-direction: column;
 }
 
 .outfit-card h3 {
-    margin-top: 10px;
+    color: #333333;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.15rem; /* ปรับขนาดให้พอดี */
+    font-weight: 600;
 }
-*/
+
+.outfit-card p { /* สำหรับราคา */
+    color: #5C8374; /* ใช้สีโทนเดียวกับ header หรือสีที่เด่น */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.outfit-card form { /* ฟอร์ม Add to cart */
+    margin-top: auto; /* ดันฟอร์มลงไปอยู่ด้านล่างสุดของ card-content */
+    margin-bottom: 0; /* เอา margin ล่างของ form ออก */
+    display: flex;
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    gap: 10px; /* ระยะห่างระหว่าง label, input, button */
+    width: 100%; /* ให้ฟอร์มเต็มความกว้าง */
+}
+
+.outfit-card form label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.outfit-card form input[type="number"] {
+    padding: 8px;
+    border: 1px solid #E0E0E0;
+    border-radius: 6px;
+    width: 60px; /* ปรับความกว้าง input */
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.outfit-card form button[type="submit"] {
+    background-color: #F6C0C0; /* สีชมพูพาสเทล (ตามที่เคยแนะนำ) */
+    color: white;
+    padding: 0.6rem 1rem; /* ปรับขนาดปุ่ม */
+    border-radius: 6px;
+    font-size: 0.9rem;
+    flex-grow: 1; /* ให้ปุ่มขยายเต็มพื้นที่ที่เหลือ */
+}
+.outfit-card form button[type="submit"]:hover {
+    background-color: #EAA7A7;
+}
+
+p.no-outfits-found { /* สำหรับ "No outfits found." */
+    text-align: center;
+    font-size: 1.1rem;
+    color: #777;
+    padding: 3rem 0;
+}
