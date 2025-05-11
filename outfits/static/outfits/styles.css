@@ -31,6 +31,9 @@
   --primary-button-hover-bg: var(--nature-green-dark);
   --primary-button-hover-text: var(--background-card);
 
+   --primary-color: var(--primary-button-bg);          /* ✅ แก้ปุ่ม submit */
+  --primary-hover-color: var(--primary-button-hover-bg);
+
 
   --secondary-button-bg: var(--pastel-pink-main);
   --secondary-button-text: var(--text-dark); /* ตัวอักษรบนปุ่มชมพูอาจจะเป็นสีเทาเข้ม */
@@ -352,3 +355,148 @@ footer p { margin-top: 0.5rem; }
   .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
   .btn-lg { padding: 0.75rem 1.8rem; font-size: 0.95rem; }
 }
+.login-container {
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: var(--background-color);
+}
+
+.login-card {
+  background-color: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.login-card p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.google-btn {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  margin-bottom: 20px;
+  transition: background 0.3s;
+  color: var(#333); 
+  font-weight: 600;
+}
+
+.google-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #222;
+}
+
+
+.google-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.google-btn:hover {
+  background-color: #f7f7f7;
+}
+
+.divider {
+  margin: 20px 0;
+  position: relative;
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+.divider::after {
+  right: 0;
+}
+
+.submit-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-2px);
+}
+
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+.signup-link a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.signup-link a:hover {
+  text-decoration: underline;
+}
+/* styles.css */
+/* ... other styles ... */
+
+button.nav-link-button {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    /* font-family: inherit; (ถ้าอยากให้ font เหมือน nav link อื่นๆ) */
+    /* font-size: inherit; (ถ้าอยากให้ขนาด font เหมือน nav link อื่นๆ) */
+    color: var(--text-medium); /* หรือสีเดียวกับ nav link อื่นๆ */
+    cursor: pointer;
+    text-decoration: none; /* หรือ underline ถ้าอยากให้เหมือนลิงก์ */
+    display: inline; /* หรือ block แล้วแต่ layout */
+    margin: 0;
+    font-weight: 500; /* เหมือน nav link อื่นๆ */
+    letter-spacing: 0.4px; /* เหมือน nav link อื่นๆ */
+    position: relative; /* ถ้าอยากจะทำ effect ::after เหมือน nav link อื่นๆ */
+}
+
+button.nav-link-button:hover,
+button.nav-link-button:focus {
+    color: var(--pastel-pink-dark); /* หรือสี hover ของ nav link อื่นๆ */
+    text-decoration: none; /* หรือ underline */
+    outline: none; /* เอา outline ตอน focus ออก ถ้าไม่ต้องการ */
+}
+

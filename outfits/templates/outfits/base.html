@@ -1,14 +1,14 @@
 {% load static %}
+{% load account %}
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{% static 'outfits/styles.css' %}">
     {% block extra_head %}{% endblock %}
     <title>{% block title %}MindVibe 🌸{% endblock %}</title>
@@ -20,14 +20,37 @@
                 <h1><a href="{% url 'outfits:home' %}">MindVibe 🌸</a></h1>
                 <nav>
                     <ul>
-                        <li><a href="{% url 'outfits:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">หน้าแรก</a></li>
-                        <li><a href="{% url 'outfits:outfit-list' %}" class="{% if request.resolver_match.url_name == 'outfit-list' or request.resolver_match.url_name == 'outfit-detail' or request.resolver_match.url_name == 'outfit-search' %}active{% endif %}">ชุดทั้งหมด</a></li>
-                        <li><a href="{% url 'outfits:cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a></li>
+                        <li>
+                            <a href="{% url 'outfits:home' %}"
+                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'home' %}active{% endif %}">หน้าแรก</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'outfits:outfit-list' %}"
+                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'outfit-list' or request.resolver_match.url_name == 'outfit-detail' or request.resolver_match.url_name == 'outfit-search' %}active{% endif %}">ชุดทั้งหมด</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'outfits:cart' %}"
+                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a>
+                        </li>
+
                         {% if user.is_authenticated %}
-                            <li><a href="{% url 'logout' %}">ออกจากระบบ ({{ user.username }})</a></li>
+                            <li>
+                                <form method="post" action="{% url 'account_logout' %}" style="display: inline; margin: 0; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link-button">
+                                        ออกจากระบบ ({{ user.username }})
+                                    </button>
+                                </form>
+                            </li>
                         {% else %}
-                            <li><a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">เข้าสู่ระบบ</a></li>
-                            <li><a href="{% url 'outfits:register' %}" class="{% if request.resolver_match.url_name == 'register' %}active{% endif %}">สมัครสมาชิก</a></li>
+                            <li>
+                                <a href="{% url 'account_login' %}"
+                                   class="{% if request.resolver_match.url_name == 'account_login' %}active{% endif %}">เข้าสู่ระบบ</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'account_signup' %}"
+                                   class="{% if request.resolver_match.url_name == 'account_signup' %}active{% endif %}">สมัครสมาชิก</a>
+                            </li>
                         {% endif %}
                     </ul>
                 </nav>
@@ -35,6 +58,16 @@
         </header>
 
         <main>
+            {% if messages %}
+                <div class="container messages-container" style="padding-top: 1rem; padding-bottom: 1rem;">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% block content %}
             {% endblock %}
         </main>
@@ -49,6 +82,8 @@
                 <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved. Sustainable Fashion For You.</p>
             </div>
         </footer>
-    </div> {# End of page-wrapper #}
+    </div>{# End of page-wrapper #}
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

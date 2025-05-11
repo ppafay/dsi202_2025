@@ -11,7 +11,7 @@ services:
       - .env
     depends_on:
       - db
-    command: gunicorn mindvibe_project.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000 # <--- จุดที่ 1
 
   db:
     image: postgres:15
