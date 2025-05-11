@@ -1,31 +1,11 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MindVibe Outfit Rental{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'outfits/styles.css' %}">
-    {% block extra_head %}{% endblock %}
-</head>
-<body>
-    <header>
-        <h1>MindVibe</h1>
-        <nav>
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'outfit-list' %}">Outfits</a>
-            <a href="{% url 'cart' %}">Cart <span class="cart-count">({{ cart_items_count|default:0 }})</span></a>
-            
-        </nav>
-    </header>
-    <main>
-        {% block content %}
-        {# เนื้อหาหลักของแต่ละหน้าจะถูกแสดงที่นี่ #}
-        {% endblock %}
-    </main>
-    <footer>
-        <p>&copy; {% now "Y" %} MindVibe. All rights reserved.</p>
-    </footer>
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="text-align: center; padding-top: 4rem;">
+  <h1 style="font-size: 2.5rem; color: #D16BA5;">ยินดีต้อนรับสู่ MindVibe 🌸</h1>
+  <p style="font-size: 1.2rem; margin: 1rem auto 2rem; color: #555;">
+    เช่าชุดสวย สไตล์คุณ ช่วยโลกไปด้วยกัน ✨<br>
+    เลือกชุดที่ใช่ในแบบที่ยั่งยืนกับเรา 💕
+  </p>
+  <a href="{% url 'outfit-list' %}" class="rent-button" style="text-decoration: none;">ดูชุดทั้งหมด</a>
+</div>
+{% endblock %}

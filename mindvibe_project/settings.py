@@ -1,15 +1,20 @@
 import os
+import dj_database_url  # ต้องติดตั้งใน requirements.txt
 from pathlib import Path
+from dotenv import load_dotenv
 
-# ตั้งค่า base directory
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security settings (เก็บรหัสลับ)
-SECRET_KEY = 'your-secret-key'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = True  # << บังคับเปิดเลย เพื่อดู error
 
-# ตั้งค่าการใช้งานแอปต่างๆ
+print("DEBUG =", DEBUG)
+
+
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -17,11 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'outfits',  # แอป outfits
+    'outfits',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ เพิ่มไว้ตรงนี้
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -32,38 +38,45 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'mindvibe_project.urls'
 
-# ตั้งค่าเทมเพลต
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # <--- บรรทัดนี้
-        'APP_DIRS': True,  # สำคัญ: Django จะค้นหา templates ใน directory 'templates' ของแต่ละแอป
+        'DIRS': [BASE_DIR / "templates"],  
+        'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'outfits.context_processors.cart_context', # ถ้าคุณสร้าง context processor สำหรับ cart
+                # 'outfits.context_processors.cart_context',  # ✅ เปิดถ้ามี
             ],
         },
     },
 ]
+
 WSGI_APPLICATION = 'mindvibe_project.wsgi.application'
 
-# ฐานข้อมูล (ใช้ SQLite)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.environ.get("USE_SQLITE", "1") == "1":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)
+    }
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'  # production
+STATICFILES_DIRS = [ BASE_DIR / "outfits/static" ]  # development
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [ BASE_DIR / "outfits/static" ]
-
-# ฟอนต์ที่ใช้
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

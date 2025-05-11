@@ -1,107 +1,101 @@
 /* project/main/dsi202/outfits/static/outfits/styles.css */
 
-/* ... (โค้ดเดิมที่ปรับสีพาสเทล) ... */
-
+/* ===== HEADER ===== */
 header {
-  background-color: #A7D7C5; /* สีเขียวพาสเทล (ตามที่เคยแนะนำ) */
+  background-color: #F7CAD0;
   color: #FFFFFF;
-  padding: 1rem 0; /* ลด padding บนล่างลงเล็กน้อยถ้าใช้ container */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* เพิ่มเงาบางๆ ให้ header */
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* ถ้าใช้ .header-container ใน HTML */
 .header-container {
-  max-width: 1200px; /* หรือขนาดที่ต้องการ */
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem; /* padding ด้านข้างสำหรับ container */
-  display: flex; /* จัดเรียง h1 และ nav ในแนวนอน */
-  justify-content: space-between; /* ให้ h1 อยู่ซ้าย nav อยู่ขวา */
-  align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
   margin: 0;
-  font-size: 1.8rem; /* อาจจะลดขนาดลงเล็กน้อยถ้าอยู่ใน flex */
-  font-weight: 700; /* เพิ่มความหนาให้เด่นขึ้น */
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 nav {
-  margin-top: 0; /* เอา margin-top ออกถ้าใช้ flex */
+  margin-top: 0;
 }
 
 nav a {
-  color: #FFFFFF; /* หรือ #5C8374 */
-  margin-left: 20px; /* ปรับระยะห่างระหว่างลิงก์ */
+  color: #FFFFFF;
+  margin-left: 20px;
   text-decoration: none;
   font-weight: 500;
-  padding: 8px 0; /* เพิ่ม padding บนล่าง */
+  padding: 8px 0;
   border-bottom: 2px solid transparent;
-  transition: border-bottom 0.3s ease, color 0.3s ease; /* เพิ่ม transition color */
+  transition: border-bottom 0.3s ease, color 0.3s ease;
 }
 
-nav a:hover, nav a.active { /* เพิ่ม .active สำหรับหน้าปัจจุบัน (ถ้ามี) */
-  border-bottom: 2px solid #FFFFFF; /* หรือสีที่ตัดกัน */
-  color: #FDFBF5; /* อาจจะให้สีสว่างขึ้นเมื่อ hover */
+nav a:hover, nav a.active {
+  border-bottom: 2px solid #FFFFFF;
+  color: #fff8f8;
 }
 
-/* BODY and MAIN CONTENT AREA */
+/* ===== BODY ===== */
 body {
-  background-color: #FDFBF5; /* สีพื้นหลังอ่อนๆ ที่แนะนำครั้งที่แล้ว */
+  background-color: #FFF1F4;
   font-family: 'Poppins', sans-serif;
-  color: #4A4A4A; /* ปรับสีเทาให้อ่านง่ายขึ้น */
-  line-height: 1.6; /* เพิ่ม line-height ให้อ่านง่าย */
+  color: #4A4A4A;
+  line-height: 1.6;
 }
 
 main {
-  min-height: calc(100vh - 160px); /* คำนวณความสูงขั้นต่ำ (ปรับ 160px ตามความสูงจริงของ header+footer) */
-  padding-top: 2rem; /* เพิ่มช่องว่างด้านบนของ main content */
-  padding-bottom: 2rem; /* เพิ่มช่องว่างด้านล่างของ main content */
+  min-height: calc(100vh - 160px);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .container {
-  padding: 0 2rem; /* เปลี่ยนจาก 2rem เป็น 0 2rem เพราะ main มี padding แล้ว */
+  padding: 0 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* project/main/dsi202/outfits/static/outfits/styles.css */
-
-/* ... (โค้ดอื่นๆ) ... */
-
+/* ===== PRODUCT DETAIL ===== */
 .product-detail-layout {
   display: flex;
-  flex-wrap: wrap; /* ให้ wrap ถ้าจอมือถือ */
-  gap: 2.5rem; /* ระยะห่างระหว่างคอลัมน์รูปกับข้อมูล */
-  align-items: flex-start; /* จัดให้อยู่บนสุด */
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  align-items: flex-start;
   margin-top: 2rem;
 }
 
 .product-image-column {
-  flex: 1 1 400px; /* ให้ขยายได้, หดได้, basis 400px */
-  max-width: 500px; /* ไม่ให้รูปใหญ่เกินไป */
+  flex: 1 1 400px;
+  max-width: 500px;
 }
 
 .product-image-column img {
   width: 100%;
-  border-radius: 12px; /* มุมโค้งมน */
+  border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
-.product-image-column h2 { /* ถ้าชื่อสินค้าอยู่บนรูป */
+.product-image-column h2 {
   margin-bottom: 1rem;
   font-size: 2rem;
   color: #333;
 }
 
-
 .product-info-column {
-  flex: 1 1 450px; /* ให้ขยายได้, หดได้, basis 450px */
+  flex: 1 1 450px;
   display: flex;
   flex-direction: column;
 }
 
-.product-info-column h2 { /* ถ้าชื่อสินค้าอยู่ส่วนข้อมูล */
-  margin-top: 0; /* ถ้าชื่อสินค้าอยู่ตรงนี้ */
+.product-info-column h2 {
+  margin-top: 0;
   margin-bottom: 1rem;
   font-size: 2.2rem;
   color: #333;
@@ -117,28 +111,30 @@ main {
 
 .product-price {
   font-size: 1.5rem;
-  color: #5C8374; /* สีเดียวกับ header */
+  color: #C86C82;
   font-weight: 600;
   margin-bottom: 2rem;
 }
 
-.rent-form .form-group { /* สมมติว่า {{ form.as_p }} สร้าง <p> หรือ <div> */
+.rent-form .form-group {
   margin-bottom: 1rem;
 }
+
 .rent-form label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: #444;
 }
+
 .rent-form input[type="number"] {
-  width: 100px; /* ปรับขนาด input ให้เหมาะสม */
+  width: 100px;
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
 
-.rent-button { /* สไตล์ปุ่ม เช่า/ถูกเช่าแล้ว */
+.rent-button {
   padding: 12px 25px;
   font-size: 1.1rem;
   border-radius: 8px;
@@ -146,38 +142,63 @@ main {
   transition: background-color 0.3s ease;
   border: none;
   font-weight: 500;
-  width: 100%; /* ให้ปุ่มเต็มความกว้าง */
-  max-width: 300px; /* หรือกำหนดความกว้างที่แน่นอน */
+  width: 100%;
+  max-width: 300px;
   margin-top: 1rem;
 }
 
-.rent-button:not([disabled]) { /* ปุ่มที่กดได้ */
-  background-color: #F6C0C0; /* สีชมพูพาสเทล */
+.rent-button:not([disabled]) {
+  background-color: #F6C0C0;
   color: white;
 }
+
 .rent-button:not([disabled]):hover {
   background-color: #EAA7A7;
 }
 
-.rent-button.rented[disabled] { /* ปุ่มที่กดไม่ได้ */
+.rent-button.rented[disabled] {
   background-color: #E0E0E0;
   color: #777777;
   cursor: not-allowed;
 }
 
-/* Responsive adjustments for detail page */
+/* ===== FOOTER ===== */
+footer {
+  background-color: #F7CAD0;
+  color: #fff;
+  padding: 1.5rem 0;
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.footer-nav {
+  margin-top: 1rem;
+}
+
+.footer-nav a {
+  color: #fff;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .product-detail-layout {
-      flex-direction: column; /* เรียงเป็นแนวตั้งในจอมือถือ */
+    flex-direction: column;
   }
   .product-image-column, .product-info-column {
-      flex-basis: auto; /* ยกเลิก basis ในจอมือถือ */
-      width: 100%;
+    flex-basis: auto;
+    width: 100%;
   }
   .product-info-column h2 {
-      font-size: 1.8rem;
+    font-size: 1.8rem;
   }
   .product-price {
-      font-size: 1.3rem;
+    font-size: 1.3rem;
   }
 }

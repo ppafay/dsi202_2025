@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}สมัครสมาชิก | MindVibe{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin: auto; padding-top: 3rem;">
+  <h2 style="text-align: center; color: #D16BA5;">สมัครสมาชิก</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="rent-button">สมัครสมาชิก</button>
+  </form>
+  <p style="text-align: center; margin-top: 1rem; font-size: 0.95rem;">
+    มีบัญชีอยู่แล้ว? <a href="{% url 'login' %}" style="color: #D16BA5;">เข้าสู่ระบบ</a>
+  </p>
+</div>
+{% endblock %}

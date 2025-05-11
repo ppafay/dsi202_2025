@@ -1,10 +1,28 @@
-version: '3.9'
-
 services:
   web:
     build: .
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
-    command: python manage.py runserver 0.0.0.0:8000
+      - .:/app                     # ✅ แก้ path mount ให้ถูกต้อง
+      - static_volume:/app/static # ✅ สำหรับ static files ที่ collect ไว้
+      - media_volume:/app/media
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: gunicorn mindvibe_project.wsgi:application --bind 0.0.0.0:8000
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mindvibe
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  static_volume:
+  postgres_data:
+  media_volume:
