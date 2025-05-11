@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'outfits/styles.css' %}">
+    {% block extra_head %}{% endblock %}
+    <title>{% block title %}MindVibe 🌸{% endblock %}</title>
+</head>
+<body>
+    <div class="page-wrapper">
+        <header>
+            <div class="container header-container">
+                <h1><a href="{% url 'outfits:home' %}">MindVibe 🌸</a></h1>
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'outfits:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">หน้าแรก</a></li>
+                        <li><a href="{% url 'outfits:outfit-list' %}" class="{% if request.resolver_match.url_name == 'outfit-list' or request.resolver_match.url_name == 'outfit-detail' or request.resolver_match.url_name == 'outfit-search' %}active{% endif %}">ชุดทั้งหมด</a></li>
+                        <li><a href="{% url 'outfits:cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'logout' %}">ออกจากระบบ ({{ user.username }})</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">เข้าสู่ระบบ</a></li>
+                            <li><a href="{% url 'outfits:register' %}" class="{% if request.resolver_match.url_name == 'register' %}active{% endif %}">สมัครสมาชิก</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-nav">
+                    <a href="#">เกี่ยวกับเรา</a>
+                    <a href="#">คำถามที่พบบ่อย</a>
+                    <a href="#">ติดต่อเรา</a>
+                </div>
+                <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved. Sustainable Fashion For You.</p>
+            </div>
+        </footer>
+    </div> {# End of page-wrapper #}
+</body>
+</html>

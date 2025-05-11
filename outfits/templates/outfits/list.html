@@ -1,43 +1,55 @@
-{% extends 'outfits/base.html' %} {# <--- ตรวจสอบว่าถูกต้องเป็น 'outfits/base.html' #}
+{% extends "outfits/base.html" %}
 {% load static %}
 
-{% block title %}Outfit List - {{ block.super }}{% endblock %}
+{% block title %}ชุดทั้งหมด - MindVibe 🌸{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'outfits/list.css' %}">
+{% endblock %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'outfits/list.css' %}"> {# หรือ 'outfits/home.css' ตามที่คุณใช้ #}
-    <h2>Outfit List</h2>
-    <form method="get" action="{% url 'outfit-search' %}">
-      <input type="text" name="q" placeholder="ค้นหาชุด" value="{{ request.GET.q }}">
-      <button type="submit">ค้นหา</button>
+<div class="container">
+    <h2 class="page-title">เลือกชุดที่ใช่สำหรับคุณ</h2>
+
+    <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
+      <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q }}" class="form-control">
+      <button type="submit" class="btn">ค้นหา</button>
     </form>
 
-    {% comment %} project/main/dsi202/outfits/templates/outfits/list.html {% endcomment %}
-{# ... #}
-<div class="outfit-grid">
-    {% for outfit in outfits %}
-    <div class="outfit-card">
-        <a href="{% url 'outfit-detail' outfit.id %}">
-            {% if outfit.image %}
-                <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
-            {% else %}
-                <img src="{% static 'outfits/images/placeholder.png' %}" alt="No image available">
-            {% endif %}
-        </a>
-        <div class="card-content"> {# <--- เพิ่ม div นี้ #}
-            <a href="{% url 'outfit-detail' outfit.id %}" style="text-decoration: none;"> {# ทำให้ชื่อสินค้าเป็นลิงก์ด้วย #}
-                <h3>{{ outfit.name }}</h3>
+    {% if outfits %}
+    <div class="outfit-grid">
+        {% for outfit in outfits %}
+        <div class="outfit-card">
+            <a href="{% url 'outfits:outfit-detail' outfit.id %}" class="image-link">
+                {% if outfit.image %}
+                    <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
+                {% else %}
+                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available"> {# Placeholder เฉพาะสำหรับชุด #}
+                {% endif %}
             </a>
-            <p>Price: ฿{{ outfit.price|floatformat:2 }}</p>
-            <form method="post" action="{% url 'add_to_cart' outfit.id %}">
-                {% csrf_token %}
-                <label for="quantity_{{ outfit.id }}">Quantity:</label>
-                <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1">
-                <button type="submit">Add to Cart</button>
-            </form>
-        </div> {# <--- ปิด div นี้ #}
+            <div class="card-content">
+                <h3><a href="{% url 'outfits:outfit-detail' outfit.id %}">{{ outfit.name }}</a></h3>
+                <p class="price-tag">฿{{ outfit.price|floatformat:2 }} / วัน</p> {# สมมติว่าราคาต่อวัน #}
+                <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="add_to_cart_form">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <label for="quantity_{{ outfit.id }}" class="sr-only">จำนวน:</label> {# sr-only for screen readers if label is visually hidden #}
+                        <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1" class="form-control quantity-input">
+                    </div>
+                    <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p class="no-outfits-found">No outfits found.</p> {# เพิ่ม class ให้ styling ง่ายขึ้น #}
-    {% endfor %}
+    {% else %}
+    <p class="no-outfits-found">
+        {% if request.GET.q %}
+            ไม่พบชุดที่ตรงกับคำค้นหา "{{ request.GET.q }}" ลองค้นหาด้วยคำอื่นดูนะคะ
+        {% else %}
+            ยังไม่มีชุดในระบบเลยค่ะ ลองแวะมาใหม่เร็วๆนี้นะคะ
+        {% endif %}
+    </p>
+    {% endif %}
 </div>
-{# ... #}
+{% endblock %}

@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{% extends "outfits/base.html" %}
+
 {% block title %}เข้าสู่ระบบ | MindVibe{% endblock %}
 {% block content %}
 <div class="container" style="max-width: 400px; margin: auto; padding-top: 3rem;">
@@ -16,7 +17,7 @@
     <button type="submit" class="rent-button">เข้าสู่ระบบ</button>
   </form>
   <p style="text-align: center; margin-top: 1rem; font-size: 0.95rem;">
-    ยังไม่มีบัญชี? <a href="{% url 'register' %}" style="color: #D16BA5;">สมัครสมาชิก</a><br>
+    ยังไม่มีบัญชี? <a href="{% url 'outfits:register' %}" style="color: #D16BA5;">สมัครสมาชิก</a><br>
     <a href="{% url 'password_reset' %}" style="font-size: 0.9rem; color: #888;">ลืมรหัสผ่าน?</a>
   </p>
 </div>

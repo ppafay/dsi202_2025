@@ -1,11 +1,49 @@
-{% extends "base.html" %}
+{% extends "outfits/base.html" %}
+{% load static %}
+
+{% block title %}ยินดีต้อนรับ - MindVibe 🌸{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'outfits/home.css' %}"> {# ถ้ามี CSS เฉพาะสำหรับ home.html #}
+{% endblock %}
+
 {% block content %}
-<div class="container" style="text-align: center; padding-top: 4rem;">
-  <h1 style="font-size: 2.5rem; color: #D16BA5;">ยินดีต้อนรับสู่ MindVibe 🌸</h1>
-  <p style="font-size: 1.2rem; margin: 1rem auto 2rem; color: #555;">
-    เช่าชุดสวย สไตล์คุณ ช่วยโลกไปด้วยกัน ✨<br>
-    เลือกชุดที่ใช่ในแบบที่ยั่งยืนกับเรา 💕
-  </p>
-  <a href="{% url 'outfit-list' %}" class="rent-button" style="text-decoration: none;">ดูชุดทั้งหมด</a>
+<div class="hero-section">
+    <div class="container text-center">
+        <h2 class="page-title hero-title">MindVibe 🌿🌸</h2>
+        <p class="hero-subtitle">
+            เช่าชุดสวย สไตล์คุณ ช่วยโลกไปด้วยกัน ✨<br>
+            เลือกชุดที่ใช่ในแบบที่ยั่งยืนกับเรา สัมผัสประสบการณ์แฟชั่นรักษ์โลก
+        </p>
+        <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary btn-lg hero-button">ค้นหาชุดโปรดของคุณ</a>
+    </div>
 </div>
+
+<div class="container features-section">
+    <h3 class="section-heading">ทำไมต้อง MindVibe?</h3>
+    <div class="features-grid">
+        <div class="feature-item">
+            {# ควรหา icon ที่เป็น SVG หรือ PNG ที่มีสไตล์มินิมอลมาใส่ #}
+            {# <img src="{% static 'outfits/images/icon-style.svg' %}" alt="Style Icon" class="feature-icon"> #}
+            <div class="feature-icon-placeholder">👗</div> {# Placeholder icon #}
+            <h4>หลากหลายสไตล์</h4>
+            <p>ชุดสวยหลากสไตล์ ตอบโจทย์ทุกโอกาสพิเศษของคุณ</p>
+        </div>
+        <div class="feature-item">
+            {# <img src="{% static 'outfits/images/icon-eco.svg' %}" alt="Eco Icon" class="feature-icon"> #}
+            <div class="feature-icon-placeholder">🌍</div> {# Placeholder icon #}
+            <h4>รักษ์โลก</h4>
+            <p>ลด Fast Fashion ร่วมสร้างความยั่งยืนให้โลกของเรา</p>
+        </div>
+        <div class="feature-item">
+            {# <img src="{% static 'outfits/images/icon-save.svg' %}" alt="Save Icon" class="feature-icon"> #}
+            <div class="feature-icon-placeholder">💰</div> {# Placeholder icon #}
+            <h4>คุ้มค่า</h4>
+            <p>ประหยัดกว่าซื้อ สวยได้ในทุกๆ วัน โดยไม่ต้องจ่ายแพง</p>
+        </div>
+    </div>
+</div>
+
+{# (Optional) Section for featured outfits or categories #}
+
 {% endblock %}

@@ -1,13 +1,241 @@
-/* static/shop/css/cart.css */
-table {
+/* project/main/dsi202/outfits/static/outfits/cart.css */
+
+.cart-section {
+    padding: 2.5rem 0 4rem; /* More padding */
+}
+
+.empty-cart-message {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    background-color: var(--background-card);
+    border-radius: 12px; /* More rounded */
+    box-shadow: 0 6px 25px rgba(180, 190, 200, 0.1);
+    border: 1px solid var(--border-soft);
+}
+.empty-cart-message p {
+    font-size: 1.25rem; /* Larger text */
+    color: var(--text-medium);
+    margin-bottom: 2rem; /* More space */
+}
+.empty-cart-message .btn-primary { /* Style the button specifically */
+    background-color: var(--nature-green-main);
+    color: var(--primary-button-text);
+}
+.empty-cart-message .btn-primary:hover {
+    background-color: var(--nature-green-dark);
+}
+
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr; /* Adjust ratio if needed */
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+
+.cart-items-card {
+    background-color: var(--background-card);
+    border-radius: 10px;
+    box-shadow: 0 6px 25px rgba(180, 190, 200, 0.1);
+    /* padding: 0.5rem 0; Removed padding, will add to cart-item */
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto 80px; /* image, details, total price, actions */
+    gap: 1.5rem; /* Default gap */
+    align-items: center;
+    padding: 1.5rem; /* Padding for each item */
+    border-bottom: 1px solid var(--border-soft);
+}
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-image img {
+    width: 100px;
+    height: 130px; /* Adjust height for better proportion */
+    object-fit: cover;
+    border-radius: 6px;
+    /* border: 1px solid var(--border-soft); Removed border, card has one */
+}
+
+.item-details h3 {
+    font-size: 1.05rem; /* Slightly smaller in cart */
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+.item-details h3 a {
+    color: var(--text-dark);
+}
+.item-details h3 a:hover {
+    color: var(--pastel-pink-dark);
+}
+
+p.item-price-each {
+    font-size: 0.85rem; /* Smaller individual price */
+    color: var(--text-light);
+    margin-bottom: 0.8rem;
+}
+
+form.update-quantity-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+input.quantity-input-cart.form-control {
+    width: 55px; /* Smaller quantity input */
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 0.45rem;
+    border-radius: 4px;
+}
+/* Use existing button styles for update, or create specific */
+form.update-quantity-form .btn-outline-primary.btn-sm {
+    padding: 0.45rem 0.8rem; /* Ensure padding matches input height */
+    font-size: 0.75rem;
+    border-radius: 20px; /* Consistent rounded buttons */
+}
+
+
+.item-total-price p {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: right;
+}
+
+.item-actions .remove-item-btn {
+    color: var(--text-light);
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem; /* 'x' size */
+    padding: 0.3rem 0.6rem;
+    line-height: 1;
+    border-radius: 50%; /* Make it circular */
+    transition: color 0.2s, background-color 0.2s;
+}
+.item-actions .remove-item-btn:hover {
+    color: #fff;
+    background-color: #e74c3c; /* Softer red */
+}
+
+/* Cart Summary */
+.summary-card {
+    background-color: var(--pastel-pink-light); /* Summary card with light pink bg */
+    border-radius: 10px;
+    box-shadow: 0 6px 25px rgba(180, 190, 200, 0.1);
+    padding: 2rem 1.75rem; /* Adjust padding */
+    position: sticky;
+    top: calc(1rem + 80px); /* Adjust based on actual header height */
+    border: 1px solid var(--pastel-pink-main); /* Pink border */
+}
+.summary-card h4 {
+    font-family: var(--font-headings);
+    font-size: 1.4rem; /* Larger summary title */
+    font-weight: 600;
+    margin-bottom: 1.8rem; /* More space */
+    text-align: center;
+    color: var(--text-dark);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--pastel-pink-main); /* Pink separator */
+}
+
+dl.summary-list {
+    margin-bottom: 1.8rem;
+}
+dl.summary-list dt,
+dl.summary-list dd {
+    display: flex; /* Use flex for better alignment */
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+}
+dl.summary-list dt {
+    color: var(--text-medium);
+}
+dl.summary-list dd {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+dt.summary-total,
+dd.summary-total-value {
+    font-size: 1.25rem;
+    font-weight: 700; /* Bolder total */
+    color: var(--text-dark);
+    border-top: 1.5px dashed var(--pastel-pink-main); /* Pink dashed line */
+    margin-top: 0.8rem;
+    padding-top: 1.2rem;
+}
+dd.summary-total-value {
+    color: var(--nature-green-dark); /* Total price in dark green */
+}
+
+.checkout-button.btn-lg {
     width: 100%;
-    border-collapse: collapse;
+    margin-bottom: 1.2rem;
+    background-color: var(--nature-green-main); /* Green checkout button */
+    color: var(--primary-button-text);
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+.checkout-button.btn-lg:hover {
+    background-color: var(--nature-green-dark);
 }
-th {
-    background-color: #f2f2f2;
+
+
+a.continue-shopping-link {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--nature-green-dark);
+    font-weight: 500;
+    margin-top: 0.5rem; /* Add some space above */
+}
+a.continue-shopping-link:hover {
+    color: var(--pastel-pink-dark);
+    text-decoration: underline;
+}
+
+/* Responsive Cart */
+@media (max-width: 992px) {
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+    .summary-card {
+        position: static;
+        margin-top: 2.5rem;
+    }
+}
+@media (max-width: 600px) { /* Adjusted breakpoint for cart item stacking */
+    .cart-item {
+        grid-template-columns: 80px 1fr; /* Smaller image column */
+        grid-template-rows: auto auto auto; /* Define rows */
+        grid-template-areas:
+            "image details"
+            "image quantity_form" /* Combine quantity and update button */
+            "price_total actions";   /* Combine total price and remove button */
+        gap: 0.8rem 1rem; /* Adjust gaps */
+        padding: 1.2rem;
+        align-items: center; /* Center items in their grid areas */
+    }
+    .item-image { grid-area: image; align-self: flex-start; }
+    .item-details { grid-area: details; }
+    form.update-quantity-form {
+        grid-area: quantity_form;
+        justify-content: flex-start;
+        margin-bottom: 0.5rem; /* Add margin if needed */
+    }
+    .item-total-price {
+        grid-area: price_total;
+        text-align: left;
+        align-self: center; /* Vertically align price */
+    }
+    .item-total-price p { font-size: 1rem; }
+    .item-actions {
+        grid-area: actions;
+        justify-self: flex-end;
+        align-self: center; /* Vertically align remove button */
+    }
+
+    .item-details h3 { font-size: 1rem; }
+    p.item-price-each { font-size: 0.8rem; margin-bottom: 0.5rem;}
 }

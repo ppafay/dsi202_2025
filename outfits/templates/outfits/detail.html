@@ -1,30 +1,49 @@
-{% comment %} project/main/dsi202/outfits/templates/outfits/list.html {% endcomment %}
-{# ... #}
-<div class="outfit-grid">
-    {% for outfit in outfits %}
-    <div class="outfit-card">
-        <a href="{% url 'outfit-detail' outfit.id %}">
-            {% if outfit.image %}
-                <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
-            {% else %}
-                <img src="{% static 'outfits/images/placeholder.png' %}" alt="No image available">
-            {% endif %}
-        </a>
-        <div class="card-content"> {# <--- เพิ่ม div นี้ #}
-            <a href="{% url 'outfit-detail' outfit.id %}" style="text-decoration: none;"> {# ทำให้ชื่อสินค้าเป็นลิงก์ด้วย #}
-                <h3>{{ outfit.name }}</h3>
-            </a>
-            <p>Price: ฿{{ outfit.price|floatformat:2 }}</p>
-            <form method="post" action="{% url 'add_to_cart' outfit.id %}">
-                {% csrf_token %}
-                <label for="quantity_{{ outfit.id }}">Quantity:</label>
-                <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1">
-                <button type="submit">Add to Cart</button>
-            </form>
-        </div> {# <--- ปิด div นี้ #}
+{% extends "outfits/base.html" %}
+{% load static %}
+
+{% block title %}{{ outfit.name }} - MindVibe 🌸{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'outfits/detail.css' %}"> {# ถ้ามี CSS เฉพาะสำหรับ detail.html #}
+{% endblock %}
+
+{% block content %}
+<div class="container detail-container">
+    <div class="breadcrumb-nav">
+        <a href="{% url 'outfits:outfit-list' %}">ชุดทั้งหมด</a> / <span>{{ outfit.name }}</span>
     </div>
-    {% empty %}
-    <p class="no-outfits-found">No outfits found.</p> {# เพิ่ม class ให้ styling ง่ายขึ้น #}
-    {% endfor %}
+
+    <div class="product-detail-layout">
+        <div class="product-image-column">
+            {% if outfit.image %}
+                <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}" class="product-main-image">
+            {% else %}
+                <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available" class="product-main-image">
+            {% endif %}
+            {# อาจจะมี thumbnail รูปภาพอื่นๆ ของชุดนี้ถ้ามี #}
+        </div>
+
+        <div class="product-info-column">
+            <h2 class="product-title">{{ outfit.name }}</h2>
+            <p class="product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+
+            <div class="product-description">
+                <h4>รายละเอียดชุด:</h4>
+                <p>{{ outfit.description|linebreaksbr|default:"ยังไม่มีคำอธิบายสำหรับชุดนี้" }}</p>
+            </div>
+
+            <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="rent-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="quantity">จำนวน:</label>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control quantity-input-detail">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg add-to-cart-button">เพิ่มลงตะกร้า</button>
+            </form>
+             {% if outfit.is_rented %} {# สมมติว่ามี field is_rented #}
+                <p class="rented-notice"><small>ชุดนี้มีผู้เช่าอยู่</small></p>
+            {% endif %}
+        </div>
+    </div>
 </div>
-{# ... #}
+{% endblock %}

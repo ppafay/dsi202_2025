@@ -1,204 +1,354 @@
 /* project/main/dsi202/outfits/static/outfits/styles.css */
 
+:root {
+  /* --- New Color Palette --- */
+  --pastel-pink-light: #FEEAFA;  /* ชมพูอ่อนมากๆ สำหรับพื้นหลังบางส่วน หรือ hover effect */
+  --pastel-pink-main: #FADADD;   /* ชมพูพาสเทลหลัก (อาจจะใช้ #F7CAD0 หรือ #FFDFD3 ตามชอบ) */
+  --pastel-pink-dark: #F4B6C2;   /* ชมพูเข้มขึ้นสำหรับ hover หรือ accent */
+
+  --nature-green-light: #E0F2E9; /* เขียวอ่อนมากๆ สำหรับพื้นหลังบางส่วน */
+  --nature-green-main: #A7D7C5;  /* เขียวธรรมชาติหลัก (มิ้นท์ๆ) */
+  --nature-green-dark: #8BBBAF;  /* เขียวเข้มขึ้นสำหรับ text หรือ accent */
+
+  --text-dark: #3D4F53;        /* สีเทาเข้มเกือบดำ ดูนุ่มนวลกว่า #000 */
+  --text-medium: #6C7A80;      /* สีเทากลางๆ */
+  --text-light: #98A5A9;       /* สีเทาอ่อน */
+
+  --background-main: #FCFDFD;   /* สีขาวนวลๆ สบายตา */
+  --background-card: #FFFFFF;
+  --border-soft: #E8EEF0;      /* สีเส้นขอบอ่อนๆ */
+
+  /* --- Font Variables --- */
+  --font-primary: 'Kanit', 'Poppins', sans-serif; /* ฟอนต์หลักสำหรับเนื้อหา */
+  --font-headings: 'Poppins', 'Kanit', sans-serif; /* ฟอนต์สำหรับหัวข้อ */
+
+  /* --- Reassigning old variables to new palette --- */
+  --primary-accent: var(--nature-green-main); /* เขียวเป็นสีเน้นหลัก */
+  --secondary-accent: var(--pastel-pink-main); /* ชมพูเป็นสีเน้นรอง */
+
+  --primary-button-bg: var(--nature-green-main);
+  --primary-button-text: var(--text-dark); /* ตัวอักษรบนปุ่มเขียวอาจจะเป็นสีเทาเข้ม */
+  --primary-button-hover-bg: var(--nature-green-dark);
+  --primary-button-hover-text: var(--background-card);
+
+
+  --secondary-button-bg: var(--pastel-pink-main);
+  --secondary-button-text: var(--text-dark); /* ตัวอักษรบนปุ่มชมพูอาจจะเป็นสีเทาเข้ม */
+  --secondary-button-hover-bg: var(--pastel-pink-dark);
+  --secondary-button-hover-text: var(--text-dark);
+
+}
+
+/* ===== RESET & BASIC STYLES ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+  background-color: var(--background-main);
+  color: var(--text-medium); /* เปลี่ยนสีตัวอักษรพื้นฐาน */
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+  padding: 3rem 0; /* เพิ่ม padding ให้ main content */
+}
+
+a {
+  color: var(--nature-green-dark); /* ลิงก์เป็นสีเขียวเข้ม */
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+a:hover {
+  color: var(--pastel-pink-dark); /* Hover เป็นสีชมพูเข้ม */
+}
+
+.container {
+  width: 100%;
+  max-width: 1180px; /* ปรับ max-width เล็กน้อย */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 /* ===== HEADER ===== */
 header {
-  background-color: #F7CAD0;
-  color: #FFFFFF;
+  background-color: var(--background-card);
   padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-bottom: 1px solid var(--border-soft);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04); /* เงาheader บางเบา */
 }
 
 .header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-header h1 {
+header h1 a {
   margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-nav {
-  margin-top: 0;
-}
-
-nav a {
-  color: #FFFFFF;
-  margin-left: 20px;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 8px 0;
-  border-bottom: 2px solid transparent;
-  transition: border-bottom 0.3s ease, color 0.3s ease;
-}
-
-nav a:hover, nav a.active {
-  border-bottom: 2px solid #FFFFFF;
-  color: #fff8f8;
-}
-
-/* ===== BODY ===== */
-body {
-  background-color: #FFF1F4;
-  font-family: 'Poppins', sans-serif;
-  color: #4A4A4A;
-  line-height: 1.6;
-}
-
-main {
-  min-height: calc(100vh - 160px);
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.container {
-  padding: 0 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* ===== PRODUCT DETAIL ===== */
-.product-detail-layout {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.5rem;
-  align-items: flex-start;
-  margin-top: 2rem;
-}
-
-.product-image-column {
-  flex: 1 1 400px;
-  max-width: 500px;
-}
-
-.product-image-column img {
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-.product-image-column h2 {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  color: #333;
-}
-
-.product-info-column {
-  flex: 1 1 450px;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-info-column h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 2.2rem;
-  color: #333;
-  line-height: 1.3;
-}
-
-.product-description {
-  font-size: 1.05rem;
-  color: #555;
-  margin-bottom: 1.5rem;
-  line-height: 1.7;
-}
-
-.product-price {
-  font-size: 1.5rem;
-  color: #C86C82;
+  font-family: var(--font-headings);
+  font-size: 1.8rem; /* ขนาดกำลังดี */
   font-weight: 600;
-  margin-bottom: 2rem;
+  color: var(--pastel-pink-main); /* ชื่อเว็บสีชมพูพาสเทล */
+  letter-spacing: 0.5px;
+}
+header h1 a:hover {
+  color: var(--nature-green-main); /* Hover เป็นสีเขียว */
 }
 
-.rent-form .form-group {
-  margin-bottom: 1rem;
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
-
-.rent-form label {
-  display: block;
-  margin-bottom: 0.5rem;
+nav ul li {
+  margin-left: 30px;
+}
+nav ul li a {
+  color: var(--text-medium); /* สีลิงก์เมนู */
   font-weight: 500;
-  color: #444;
+  font-size: 0.9rem; /* ลดขนาด font เมนูเล็กน้อย */
+  padding: 10px 4px; /* ปรับ padding */
+  position: relative;
+  letter-spacing: 0.4px; /* เพิ่มความห่างตัวอักษร */
 }
-
-.rent-form input[type="number"] {
-  width: 100px;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+nav ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 6px; /* ปรับตำแหน่งขีดเส้นใต้ */
+  left: 50%; /* ให้ขีดเส้นใต้อยู่กลาง */
+  transform: translateX(-50%); /* จัดให้อยู่กลาง */
+  background-color: var(--pastel-pink-main); /* ขีดเส้นใต้สีชมพู */
+  transition: width 0.3s ease;
 }
-
-.rent-button {
-  padding: 12px 25px;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: none;
-  font-weight: 500;
+nav ul li a:hover::after,
+nav ul li a.active::after {
   width: 100%;
-  max-width: 300px;
-  margin-top: 1rem;
+}
+nav ul li a:hover,
+nav ul li a.active {
+  color: var(--pastel-pink-dark); /* Active/hover เป็นสีชมพูเข้ม */
 }
 
-.rent-button:not([disabled]) {
-  background-color: #F6C0C0;
-  color: white;
+/* ===== MAIN CONTENT & HEADINGS ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+  font-weight: 600;
+  line-height: 1.35; /* ปรับ line-height ของ heading */
+  margin-top: 0;
+  margin-bottom: 0.85rem; /* ปรับ margin bottom */
+  color: var(--text-dark);
 }
 
-.rent-button:not([disabled]):hover {
-  background-color: #EAA7A7;
+h2.page-title {
+  font-size: 2.3rem; /* ขนาดหัวข้อหลัก */
+  text-align: center;
+  margin-bottom: 2.8rem; /* เพิ่มระยะห่าง */
+  letter-spacing: 0.5px;
+  color: var(--text-dark); /* สีหัวข้อหลัก */
 }
 
-.rent-button.rented[disabled] {
-  background-color: #E0E0E0;
-  color: #777777;
-  cursor: not-allowed;
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-block;
+  font-family: var(--font-primary);
+  font-weight: 500; /* น้ำหนัก font ปุ่ม */
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1.5px solid transparent;
+  padding: 0.7rem 1.6rem; /* ปรับ padding ปุ่ม */
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-radius: 30px; /* ปุ่มมน */
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1); /* Easing นุ่มนวล */
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.08);
+}
+.btn:active {
+  transform: translateY(0px); /* ลดการลอยตอน active */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn-primary { /* ปุ่มหลักสีเขียว */
+  color: var(--primary-button-text);
+  background-color: var(--primary-button-bg);
+  border-color: var(--primary-button-bg);
+}
+.btn-primary:hover {
+  background-color: var(--primary-button-hover-bg);
+  border-color: var(--primary-button-hover-bg);
+  color: var(--primary-button-hover-text);
+}
+
+.btn-secondary { /* ปุ่มรองสีชมพู */
+  color: var(--secondary-button-text);
+  background-color: var(--secondary-button-bg);
+  border-color: var(--secondary-button-bg);
+}
+.btn-secondary:hover {
+  background-color: var(--secondary-button-hover-bg);
+  border-color: var(--secondary-button-hover-bg);
+  color: var(--secondary-button-hover-text);
+}
+
+.btn-lg {
+  padding: 0.85rem 2.2rem;
+  font-size: 1rem;
+}
+.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px; /* ลด letter spacing ของปุ่มเล็ก */
+}
+
+/* Outline buttons */
+.btn-outline-primary {
+  color: var(--primary-button-bg);
+  border-color: var(--primary-button-bg);
+  background-color: transparent;
+}
+.btn-outline-primary:hover {
+  color: var(--primary-button-hover-text);
+  background-color: var(--primary-button-bg);
+}
+
+.btn-outline-secondary {
+  color: var(--secondary-button-bg);
+  border-color: var(--secondary-button-bg);
+  background-color: transparent;
+}
+.btn-outline-secondary:hover {
+  color: var(--secondary-button-hover-text);
+  background-color: var(--secondary-button-bg);
+}
+
+/* Link as button */
+.btn-link {
+  font-weight: 500;
+  color: var(--nature-green-dark);
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  text-transform: none; /* ไม่ต้อง uppercase */
+  letter-spacing: normal;
+}
+.btn-link:hover {
+  color: var(--pastel-pink-dark);
+  text-decoration: underline;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* ===== FORMS ===== */
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 1rem; /* เพิ่ม padding input */
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--background-card);
+  background-clip: padding-box;
+  border: 1px solid var(--border-soft); /* เส้นขอบ input อ่อนลง */
+  border-radius: 6px; /* มุมมน input */
+  transition: border-color .2s ease-in-out, box-shadow .2s ease-in-out;
+}
+.form-control::placeholder {
+  color: var(--text-light);
+  opacity: 0.8;
+}
+.form-control:focus {
+  border-color: var(--nature-green-main); /* focus เป็นสีเขียว */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(167, 215, 197, 0.3);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+label {
+  display: inline-block;
+  margin-bottom: .6rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-dark);
 }
 
 /* ===== FOOTER ===== */
 footer {
-  background-color: #F7CAD0;
-  color: #fff;
-  padding: 1.5rem 0;
-  margin-top: 4rem;
+  background-color: var(--pastel-pink-light); /* Footer สีชมพูอ่อนมาก */
+  color: var(--text-medium);
+  padding: 3rem 0; /* เพิ่ม padding footer */
+  margin-top: auto;
   text-align: center;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.9rem;
 }
-
-.footer-nav {
-  margin-top: 1rem;
-}
-
+.footer-nav { margin-bottom: 1rem; } /* เพิ่มระยะห่าง */
 .footer-nav a {
-  color: #fff;
-  margin: 0 10px;
-  text-decoration: none;
+  color: var(--text-medium);
+  margin: 0 15px;
   font-weight: 500;
+  transition: color 0.2s ease;
+}
+.footer-nav a:hover { color: var(--nature-green-dark); }
+footer p { margin-top: 0.5rem; }
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  /* Can add more specific tablet adjustments here */
 }
 
-.footer-nav a:hover {
-  text-decoration: underline;
-}
-
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .product-detail-layout {
-    flex-direction: column;
+  body { font-size: 15px; }
+  .container { padding: 0 15px; }
+
+  header { padding: 0.8rem 0; }
+  header h1 a { font-size: 1.6rem; }
+
+  nav ul {
+      /* Consider a hamburger menu for mobile */
+      display: none; /* Simple hide for now, implement toggle if needed */
   }
-  .product-image-column, .product-info-column {
-    flex-basis: auto;
-    width: 100%;
-  }
-  .product-info-column h2 {
-    font-size: 1.8rem;
-  }
-  .product-price {
-    font-size: 1.3rem;
-  }
+
+  h2.page-title { font-size: 1.9rem; margin-bottom: 2rem; }
+  main { padding: 2.5rem 0; }
+
+  .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+  .btn-lg { padding: 0.75rem 1.8rem; font-size: 0.95rem; }
 }

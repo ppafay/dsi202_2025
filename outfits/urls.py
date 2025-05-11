@@ -1,3 +1,5 @@
+app_name = 'outfits'
+
 from django.urls import path
 from .views import (
     home, OutfitListView, OutfitDetailView, OutfitSearchView,
@@ -13,7 +15,7 @@ urlpatterns = [
     path('create/', create_outfit, name='create-outfit'),
 
     path('cart/', cart_view, name='cart'),
-    path('add-to-cart/<int:outfit_id>/', add_to_cart, name='add-to-cart'),
+    path('add-to-cart/<int:outfit_id>/', add_to_cart, name='add_to_cart'), 
     path('update-cart/<int:item_id>/', update_cart, name='update-cart'),
     path('remove-from-cart/<int:item_id>/', remove_from_cart, name='remove-from-cart'),
 

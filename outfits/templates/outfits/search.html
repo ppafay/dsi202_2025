@@ -1,4 +1,5 @@
-{% extends 'outfits/base.html' %}
+{% extends "outfits/base.html" %}
+
 {% block content %}
 <h2>ผลการค้นหา "{{ query }}"</h2>
 {% for result in results %}
@@ -6,7 +7,7 @@
   <img src="{{ result.image.url }}" width="250">
   <h3>{{ result.name }}</h3>
   <p>{{ result.description }}</p>
-  <a href="{% url 'outfit-detail' result.pk %}">ดูรายละเอียด</a>
+  <a href="{% url 'outfits:outfit-detail' result.pk %}">ดูรายละเอียด</a>
 </div>
 {% empty %}
 <p>ไม่พบข้อมูล</p>

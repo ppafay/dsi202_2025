@@ -1,17 +1,15 @@
 import os
-import dj_database_url  # ต้องติดตั้งใน requirements.txt
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url  # อย่าลืมใส่ใน requirements.txt
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = True  # << บังคับเปิดเลย เพื่อดู error
-
+DEBUG = True
 print("DEBUG =", DEBUG)
-
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
 
@@ -27,7 +25,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ เพิ่มไว้ตรงนี้
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,15 +39,16 @@ ROOT_URLCONF = 'mindvibe_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  
-        'APP_DIRS': True, 
+        'DIRS': [ 
+        ],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'outfits.context_processors.cart_context',  # ✅ เปิดถ้ามี
+                # 'outfits.context_processors.cart_context',  # เปิดใช้ถ้ามี
             ],
         },
     },
@@ -69,10 +68,9 @@ else:
         'default': dj_database_url.config(conn_max_age=600)
     }
 
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'  # production
-STATICFILES_DIRS = [ BASE_DIR / "outfits/static" ]  # development
+STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [BASE_DIR / "outfits" / "static"]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

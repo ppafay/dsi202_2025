@@ -1,91 +1,70 @@
-{% extends 'outfits/base.html' %} {# ตรวจสอบว่า base.html ถูกต้อง #}
+{% extends "outfits/base.html" %}
 {% load static %}
 
-{% block title %}Shopping Cart - {{ block.super }}{% endblock %}
+{% block title %}ตะกร้าสินค้า - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'outfits/cart.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="section-content padding-y">
+<section class="cart-section">
     <div class="container">
-        <h2>Your Shopping Cart</h2>
-        {# ใช้ cart_items_list ที่ส่งมาจาก view และตรวจสอบ cart object โดยตรง #}
+        <h2 class="page-title">🛒 ตะกร้าสินค้าของคุณ</h2>
+
         {% if not cart or not cart_items_list %}
-            <p>Your cart is empty.</p>
-            <a href="{% url 'outfit-list' %}" class="btn btn-primary">Continue Shopping</a>
+            <div class="empty-cart-message">
+                <p>ตะกร้าของคุณยังว่างเปล่าอยู่เลยค่ะ</p>
+                <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary">เลือกชมชุดสวยๆ ต่อเลย!</a>
+            </div>
         {% else %}
-            <div class="row">
-                <main class="col-md-9">
-                    <div class="card">
-                        <header class="card-header">
-                            <strong class="d-inline-block mr-3">Your items:</strong>
-                        </header>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" width="60%">Product</th>
-                                        <th scope="col" width="10%">Quantity</th>
-                                        <th scope="col" width="15%">Price</th>
-                                        <th scope="col" width="15%" class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {# วนลูปผ่าน cart_items_list #}
-                                    {% for item in cart_items_list %}
-                                    <tr>
-                                        <td>
-                                            <figure class="media">
-                                                {% if item.outfit.image %}
-                                                <div class="img-wrap"><img src="{{ item.outfit.image.url }}" class="img-thumbnail img-xs"></div>
-                                                {% endif %}
-                                                <figcaption class="media-body">
-                                                    <h6 class="title text-truncate">{{ item.outfit.name }}</h6>
-                                                </figcaption>
-                                            </figure>
-                                        </td>
-                                        <td>
-                                            {# ฟอร์ม update_cart ควรใช้ method POST และส่ง item.id #}
-                                            <form method="post" action="{% url 'update_cart' item.id %}" style="display: inline-flex; align-items: center; gap: 5px;">
-                                                {% csrf_token %}
-                                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm" style="width: 70px;">
-                                                <button type="submit" class="btn btn-sm btn-outline-success">Update</button>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="price-wrap">
-                                                {# ใช้ method get_total_item_price จาก CartItem model #}
-                                                <var class="price">฿{{ item.get_total_item_price|floatformat:2 }}</var>
-                                                <small class="text-muted">(฿{{ item.outfit.price|floatformat:2 }} each)</small>
-                                            </div>
-                                        </td>
-                                        <td class="text-right">
-                                            <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger">× Remove</a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+            <div class="cart-layout">
+                <main class="cart-items-column">
+                    <div class="cart-items-card">
+                        {% for item in cart_items_list %}
+                        <div class="cart-item">
+                            <div class="item-image">
+                                <a href="{% url 'outfits:outfit-detail' item.outfit.id %}">
+                                {% if item.outfit.image %}
+                                    <img src="{{ item.outfit.image.url }}" alt="{{ item.outfit.name }}">
+                                {% else %}
+                                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available">
+                                {% endif %}
+                                </a>
+                            </div>
+                            <div class="item-details">
+                                <h3><a href="{% url 'outfits:outfit-detail' item.outfit.id %}">{{ item.outfit.name }}</a></h3>
+                                <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / ชุด</p>
+                                <form method="post" action="{% url 'outfits:update-cart' item.id %}" class="update-quantity-form">
+                                    {% csrf_token %}
+                                    <label for="quantity_cart_{{ item.id }}" class="sr-only">จำนวน:</label>
+                                    <input type="number" name="quantity" id="quantity_cart_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control quantity-input-cart">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">อัปเดต</button>
+                                </form>
+                            </div>
+                            <div class="item-total-price">
+                                <p>฿{{ item.get_total_item_price|floatformat:2 }}</p>
+                            </div>
+                            <div class="item-actions">
+                                <a href="{% url 'outfits:remove-from-cart' item.id %}" class="btn btn-sm btn-outline-danger remove-item-btn" title="ลบสินค้า">×</a>
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <a href="{% url 'outfit-list' %}" class="btn btn-primary float-left">Continue Shopping</a>
-                            {# ใช้ cart.total_price ที่คำนวณแล้วจาก view หรือ model method #}
-                            <strong class="float-right">Total price: ฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</strong>
-                        </div>
+                        {% endfor %}
                     </div>
                 </main>
-                <aside class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <dl class="dlist-align">
-                                <dt>Total price:</dt>
-                                <dd class="text-right">฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
-                            </dl>
-                            <hr>
-                            <a href="#" class="btn btn-primary btn-block"> Checkout </a> {# สร้าง URL 'checkout' #}
-                        </div>
+
+                <aside class="cart-summary-column">
+                    <div class="summary-card">
+                        <h4>สรุปยอดคำสั่งซื้อ</h4>
+                        <dl class="summary-list">
+                            <dt>ยอดรวมสินค้า:</dt>
+                            <dd>฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
+                            {# อาจจะมีค่าจัดส่ง หรือส่วนลดในอนาคต #}
+                            <dt class="summary-total">ยอดรวมสุทธิ:</dt>
+                            <dd class="summary-total-value">฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
+                        </dl>
+                        <a href="#" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
+                        <a href="{% url 'outfits:outfit-list' %}" class="continue-shopping-link">← หรือเลือกซื้อสินค้าต่อ</a>
                     </div>
                 </aside>
             </div>

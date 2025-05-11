@@ -94,18 +94,18 @@ def add_to_cart(request, outfit_id):
         cart_item = CartItem.objects.create(cart=cart, outfit=outfit_obj, quantity=1)
 
     cart.get_total_price()
-    return redirect('cart')
+    return redirect('outfits:cart')
 
 # ---------------- แก้ไขจำนวน
 def update_cart(request, item_id):
     cart_id = request.session.get('cart_id')
     if not cart_id:
-        return redirect('cart')
+        return redirect('outfits:cart')
 
     try:
         cart = Cart.objects.get(id=cart_id)
     except Cart.DoesNotExist:
-        return redirect('cart')
+        return redirect('outfits:cart')
 
     cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
 
@@ -121,23 +121,23 @@ def update_cart(request, item_id):
         cart_item.delete()
 
     cart.get_total_price()
-    return redirect('cart')
+    return redirect('outfits:cart')
 
 # ---------------- ลบจากตะกร้า
 def remove_from_cart(request, item_id):
     cart_id = request.session.get('cart_id')
     if not cart_id:
-        return redirect('cart')
+        return redirect('outfits:cart')
 
     try:
         cart = Cart.objects.get(id=cart_id)
     except Cart.DoesNotExist:
-        return redirect('cart')
+        return redirect('outfits:cart')
 
     cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
     cart_item.delete()
     cart.get_total_price()
-    return redirect('cart')
+    return redirect('outfits:cart')
 
 # ---------------- Login / Logout / Register
 def user_login(request):
