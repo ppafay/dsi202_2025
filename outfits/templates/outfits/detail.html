@@ -4,7 +4,7 @@
 {% block title %}{{ outfit.name }} - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/detail.css' %}"> {# ถ้ามี CSS เฉพาะสำหรับ detail.html #}
+    <link rel="stylesheet" href="{% static 'outfits/detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -20,28 +20,30 @@
             {% else %}
                 <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available" class="product-main-image">
             {% endif %}
-            {# อาจจะมี thumbnail รูปภาพอื่นๆ ของชุดนี้ถ้ามี #}
         </div>
 
         <div class="product-info-column">
             <h2 class="product-title">{{ outfit.name }}</h2>
-            <p class="product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+            <p class.product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
 
             <div class="product-description">
                 <h4>รายละเอียดชุด:</h4>
                 <p>{{ outfit.description|linebreaksbr|default:"ยังไม่มีคำอธิบายสำหรับชุดนี้" }}</p>
             </div>
 
+            {% comment %}
+            The RentForm for selecting dates is removed from here.
+            Users will select dates in the cart.
+            The quantity input is also removed as rentals are typically quantity 1.
+            {% endcomment %}
             <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="rent-form">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="quantity">จำนวน:</label>
-                    <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control quantity-input-detail">
-                </div>
+                {% comment %} Input for quantity is removed, will be 1 by default {% endcomment %}
                 <button type="submit" class="btn btn-primary btn-lg add-to-cart-button">เพิ่มลงตะกร้า</button>
             </form>
-             {% if outfit.is_rented %} {# สมมติว่ามี field is_rented #}
-                <p class="rented-notice"><small>ชุดนี้มีผู้เช่าอยู่</small></p>
+
+            {% if outfit.is_rented %}
+                <p class="rented-notice"><small>ชุดนี้อาจมีผู้เช่าอยู่ (ตรวจสอบวันว่างในตะกร้า)</small></p>
             {% endif %}
         </div>
     </div>

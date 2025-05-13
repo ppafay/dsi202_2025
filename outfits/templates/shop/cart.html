@@ -1,10 +1,18 @@
 {% extends "outfits/base.html" %}
 {% load static %}
+{% comment %} {% load crispy_forms_tags %} หากคุณใช้ crispy forms {% endcomment %}
 
 {% block title %}ตะกร้าสินค้า - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'outfits/cart.css' %}">
+    <style>
+        .date-selection-form label { font-size: 0.85em; margin-bottom: 0.2rem; display: block; }
+        .date-selection-form .form-control-sm { margin-bottom: 0.5rem; }
+        .item-rental-info p { margin-bottom: 0.3rem; font-size: 0.9em;}
+        .update-dates-btn { margin-top: 0.5rem;}
+        .errorlist { color: red; font-size: 0.8em; list-style-type: none; padding-left: 0;}
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -12,7 +20,16 @@
     <div class="container">
         <h2 class="page-title">🛒 ตะกร้าสินค้าของคุณ</h2>
 
-        {% if not cart or not cart_items_list %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if not cart or not forms_with_items %}
             <div class="empty-cart-message">
                 <p>ตะกร้าของคุณยังว่างเปล่าอยู่เลยค่ะ</p>
                 <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary">เลือกชมชุดสวยๆ ต่อเลย!</a>
@@ -21,7 +38,8 @@
             <div class="cart-layout">
                 <main class="cart-items-column">
                     <div class="cart-items-card">
-                        {% for item in cart_items_list %}
+                        {% for form_item_pair in forms_with_items %}
+                        {% with item=form_item_pair.item date_form=form_item_pair.date_form %}
                         <div class="cart-item">
                             <div class="item-image">
                                 <a href="{% url 'outfits:outfit-detail' item.outfit.id %}">
@@ -34,20 +52,44 @@
                             </div>
                             <div class="item-details">
                                 <h3><a href="{% url 'outfits:outfit-detail' item.outfit.id %}">{{ item.outfit.name }}</a></h3>
-                                <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / ชุด</p>
-                                <form method="post" action="{% url 'outfits:update_cart' item.id %}" class="update-quantity-form">
+                                <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / วัน</p>
+                                <p class="item-price-each">จำนวน: {{ item.quantity }}</p>
+
+                                {% if item.start_date and item.end_date %}
+                                    <div class="item-rental-info">
+                                        <p><strong>เช่าวันที่:</strong> {{ item.start_date|date:"d M Y" }}</p>
+                                        <p><strong>ถึงวันที่:</strong> {{ item.end_date|date:"d M Y" }}</p>
+                                        <p><strong>รวม:</strong> {{ item.get_rental_days }} วัน</p>
+                                        <p><strong>ราคาเช่ารายการนี้:</strong> ฿{{ item.get_total_item_price|floatformat:2 }}</p>
+                                        {% if not cart.is_paid %}
+                                        <small><a href="#" onclick="document.getElementById('date_form_{{ item.id }}').style.display='block'; this.style.display='none'; return false;">แก้ไขวันเช่า</a></small>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if date_form and not cart.is_paid %}
+                                <form method="post" action="{% url 'outfits:update_cart_item_dates' item.id %}" class="date-selection-form" id="date_form_{{ item.id }}" style="{% if item.start_date and item.end_date %}display:none;{% endif %} margin-top:10px;">
                                     {% csrf_token %}
-                                    <label for="quantity_cart_{{ item.id }}" class="sr-only">จำนวน:</label>
-                                    <input type="number" name="quantity" id="quantity_cart_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control quantity-input-cart">
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">อัปเดต</button>
+                                    <div>{{ date_form.start_date.label_tag }} {{ date_form.start_date }} {{ date_form.start_date.errors }}</div>
+                                    <div>{{ date_form.end_date.label_tag }} {{ date_form.end_date }} {{ date_form.end_date.errors }}</div>
+                                    <button type="submit" class="btn btn-sm btn-success update-dates-btn">
+                                        {% if item.start_date and item.end_date %}อัปเดตวัน{% else %}เลือกวันเช่า{% endif %}
+                                    </button>
                                 </form>
+                                {% elif not item.start_date or not item.end_date and not cart.is_paid %}
+                                    <p class="text-danger small">กรุณาเลือกวันเช่า</p>
+                                {% endif %}
                             </div>
                             <div class="item-total-price">
                                 <p>฿{{ item.get_total_item_price|floatformat:2 }}</p>
                             </div>
                             <div class="item-actions">
-                               <a href="{% url 'outfits:remove_from_cart' item.id %}" class="remove-link">×</a>
+                               {% if not cart.is_paid %}
+                               <a href="{% url 'outfits:remove_from_cart' item.id %}" class="remove-link" title="ลบรายการนี้">×</a>
+                               {% endif %}
+                            </div>
                         </div>
+                        {% endwith %}
                         {% endfor %}
                     </div>
                 </main>
@@ -58,11 +100,22 @@
                         <dl class="summary-list">
                             <dt>ยอดรวมสินค้า:</dt>
                             <dd>฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
-                            {# อาจจะมีค่าจัดส่ง หรือส่วนลดในอนาคต #}
                             <dt class="summary-total">ยอดรวมสุทธิ:</dt>
                             <dd class="summary-total-value">฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
                         </dl>
-                        <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
+
+                        {% if cart.cart_items_cart.exists and not cart.is_paid %}
+                            {% if all_dates_selected_for_cart %}  {% comment %} <<< ใช้ตัวแปรจาก view ที่นี่ {% endcomment %}
+                                <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
+                            {% else %}
+                                <p class="text-danger small">กรุณาเลือกวันเช่าสำหรับทุกรายการให้ครบถ้วน</p>
+                                <button class="btn btn-primary btn-lg checkout-button" disabled>ดำเนินการชำระเงิน</button>
+                            {% endif %}
+                        {% elif cart.is_paid %}
+                             <p class="text-success small">ตะกร้านี้ได้ชำระเงินแล้ว</p>
+                        {% else %}
+                             <button class="btn btn-primary btn-lg checkout-button" disabled>ดำเนินการชำระเงิน</button>
+                        {% endif %}
                         <a href="{% url 'outfits:outfit-list' %}" class="continue-shopping-link">← หรือเลือกซื้อสินค้าต่อ</a>
                     </div>
                 </aside>
