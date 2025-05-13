@@ -9,10 +9,15 @@
         <h2>Welcome Back 👋</h2>
         <p>Log in to your MindVibe account</p>
 
-        <a href="{% provider_login_url 'google' %}" class="google-btn">
-            <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-            Continue with Google
-        </a>
+        {% get_providers as social_providers %}
+        {% for provider in social_providers %}
+          {% if provider.id == "google" %}
+            <a href="{% provider_login_url provider.id %}" class="google-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
+                Continue with {{ provider.name }}
+            </a>
+          {% endif %}
+        {% endfor %}
 
         <div class="divider"><span>or</span></div>
 

@@ -1,0 +1,16 @@
+{% extends 'outfits/base.html' %}
+{% load static %}
+
+{% block title %}QR Payment - MindVibe{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <h2>ชำระเงินผ่าน PromptPay</h2>
+    <p>กรุณาสแกน QR ด้านล่างเพื่อชำระเงิน</p>
+    <img src="{{ qr_image }}" alt="PromptPay QR Code" />
+    <p>ยอดรวม: <strong>฿{{ total|floatformat:2 }}</strong></p>
+    <a href="{% url 'outfits:confirm_payment' %}" class="btn btn-primary">แนบสลิปการโอน</a>
+    <br><br>
+    <a href="{% url 'outfits:cart' %}" class="btn btn-secondary">ย้อนกลับไปยังตะกร้า</a>
+</div>
+{% endblock %}

@@ -35,7 +35,7 @@
                             <div class="item-details">
                                 <h3><a href="{% url 'outfits:outfit-detail' item.outfit.id %}">{{ item.outfit.name }}</a></h3>
                                 <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / ชุด</p>
-                                <form method="post" action="{% url 'outfits:update-cart' item.id %}" class="update-quantity-form">
+                                <form method="post" action="{% url 'outfits:update_cart' item.id %}" class="update-quantity-form">
                                     {% csrf_token %}
                                     <label for="quantity_cart_{{ item.id }}" class="sr-only">จำนวน:</label>
                                     <input type="number" name="quantity" id="quantity_cart_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control quantity-input-cart">
@@ -46,8 +46,7 @@
                                 <p>฿{{ item.get_total_item_price|floatformat:2 }}</p>
                             </div>
                             <div class="item-actions">
-                                <a href="{% url 'outfits:remove-from-cart' item.id %}" class="btn btn-sm btn-outline-danger remove-item-btn" title="ลบสินค้า">×</a>
-                            </div>
+                               <a href="{% url 'outfits:remove_from_cart' item.id %}" class="remove-link">×</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -63,7 +62,7 @@
                             <dt class="summary-total">ยอดรวมสุทธิ:</dt>
                             <dd class="summary-total-value">฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
                         </dl>
-                        <a href="#" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
+                        <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
                         <a href="{% url 'outfits:outfit-list' %}" class="continue-shopping-link">← หรือเลือกซื้อสินค้าต่อ</a>
                     </div>
                 </aside>

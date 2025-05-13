@@ -1,0 +1,30 @@
+{% extends 'outfits/base.html' %}
+{% load static %}
+
+{% block title %}ประวัติการสั่งซื้อ - MindVibe{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 40px;">
+    <h2 class="section-title" style="color: #5C4033; margin-bottom: 30px;">🧾 ประวัติการสั่งซื้อที่ชำระแล้ว</h2>
+
+    {% for cart in carts %}
+        <div class="order-item" style="border: 1px solid #EEE; padding: 20px; border-radius: 12px; margin-bottom: 20px; background-color: #FEEAFA;">
+            <p><strong>คำสั่งซื้อ #{{ cart.id }}</strong></p>
+            <p>ยอดรวม: <strong>฿{{ cart.total_price|floatformat:2 }}</strong></p>
+            <p>วันที่: {{ cart.updated_at|date:"d M Y H:i" }}</p>
+
+            {% if cart.payment_slip %}
+                <p>สลิปการโอน:</p>
+                <img src="{{ cart.payment_slip.url }}" alt="Payment Slip" style="max-width: 100%; border: 1px solid #CCC; border-radius: 8px;">
+            {% else %}
+                <p><em>ไม่มีสลิป</em></p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <div class="empty-state" style="text-align: center; padding: 50px;">
+            <p style="font-size: 1.2em; color: #888;">ยังไม่มีคำสั่งซื้อที่ชำระเงิน</p>
+            <a href="{% url 'outfits:outfit-list' %}" class="btn" style="background-color: #CB9CA6; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">เลือกชุดเลย</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

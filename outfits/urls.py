@@ -1,25 +1,25 @@
+from django.urls import path
+from . import views
+
 app_name = 'outfits'
 
-from django.urls import path
-from .views import (
-    home, OutfitListView, OutfitDetailView, OutfitSearchView,
-    create_outfit, cart_view, add_to_cart, update_cart, remove_from_cart,
-    user_login, user_logout, register
-)
-
 urlpatterns = [
-    path('', home, name='home'),
-    path('outfits/', OutfitListView.as_view(), name='outfit-list'),
-    path('outfits/<int:pk>/', OutfitDetailView.as_view(), name='outfit-detail'),
-    path('search/', OutfitSearchView.as_view(), name='outfit-search'),
-    path('create/', create_outfit, name='create-outfit'),
+    path('', views.home, name='home'),
+    path('outfits/', views.OutfitListView.as_view(), name='outfit-list'),
+    path('outfits/search/', views.OutfitSearchView.as_view(), name='outfit-search'),
+    path('outfits/<int:pk>/', views.OutfitDetailView.as_view(), name='outfit-detail'),
+    path('outfits/create/', views.create_outfit, name='create-outfit'),
 
-    path('cart/', cart_view, name='cart'),
-    path('add-to-cart/<int:outfit_id>/', add_to_cart, name='add_to_cart'), 
-    path('update-cart/<int:item_id>/', update_cart, name='update-cart'),
-    path('remove-from-cart/<int:item_id>/', remove_from_cart, name='remove-from-cart'),
+    path('cart/', views.cart_view, name='cart'),
+    path('cart/add/<int:outfit_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
+    path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
 
-    path('login/', user_login, name='login'),
-    path('logout/', user_logout, name='logout'),
-    path('register/', register, name='register'),
+    path('payment/', views.payment_qr_view, name='payment'),
+    path('payment/confirm/', views.confirm_payment_view, name='confirm_payment'),
+    path('orders/history/', views.order_history_view, name='order_history'),
+
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('register/', views.register, name='register'),
 ]

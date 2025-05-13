@@ -26,14 +26,20 @@
                         </li>
                         <li>
                             <a href="{% url 'outfits:outfit-list' %}"
-                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'outfit-list' or request.resolver_match.url_name == 'outfit-detail' or request.resolver_match.url_name == 'outfit-search' %}active{% endif %}">ชุดทั้งหมด</a>
+                               class="{% if request.resolver_match.url_name in 'outfit-list outfit-detail outfit-search' %}active{% endif %}">ชุดทั้งหมด</a>
                         </li>
                         <li>
                             <a href="{% url 'outfits:cart' %}"
-                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a>
+                               class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a>
                         </li>
 
                         {% if user.is_authenticated %}
+                            <li>
+                                <a href="{% url 'order_history' %}"
+                                   class="{% if request.resolver_match.url_name == 'order_history' %}active{% endif %}">
+                                    ประวัติการสั่งซื้อ
+                                </a>
+                            </li>
                             <li>
                                 <form method="post" action="{% url 'account_logout' %}" style="display: inline; margin: 0; padding: 0;">
                                     {% csrf_token %}
@@ -82,7 +88,7 @@
                 <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved. Sustainable Fashion For You.</p>
             </div>
         </footer>
-    </div>{# End of page-wrapper #}
+    </div> <!-- End of page-wrapper -->
 
     {% block extra_scripts %}{% endblock %}
 </body>

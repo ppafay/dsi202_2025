@@ -499,4 +499,103 @@ button.nav-link-button:focus {
     text-decoration: none; /* หรือ underline */
     outline: none; /* เอา outline ตอน focus ออก ถ้าไม่ต้องการ */
 }
+/* === MindVibe Payment Styles === */
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background-color: #FDF6F9;
+  color: #403B33;
+}
+
+.payment-container,
+.payment-confirm,
+.payment-success {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.payment-container h2,
+.payment-confirm h2,
+.payment-success h2 {
+  color: #CB9CA6; /* dusty rose */
+  margin-bottom: 20px;
+}
+
+.payment-container p,
+.payment-confirm p {
+  font-size: 1.1em;
+  color: #7A8575; /* sage tone */
+}
+
+.payment-container img {
+  width: 280px;
+  margin: 20px auto;
+  border: 6px solid #FADADD; /* light pink border */
+  border-radius: 12px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1em;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: #CB9CA6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #b1848c;
+}
+
+.btn-secondary {
+  background-color: #7A8575;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #65715f;
+}
+
+form input[type="file"] {
+  margin: 15px 0;
+  font-size: 1em;
+}
+
+.order-history {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.order-history h2 {
+  color: #403B33;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #E6CACE;
+  padding-bottom: 10px;
+}
+
+.order-item {
+  border: 1px solid #EAEAEA;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.order-item img {
+  max-width: 200px;
+  margin-top: 10px;
+  border-radius: 6px;
+}
 

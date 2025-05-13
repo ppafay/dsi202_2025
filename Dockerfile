@@ -22,3 +22,6 @@ COPY mindvibe_project /app/mindvibe_project
 RUN python manage.py collectstatic --noinput
 
 CMD ["gunicorn", "mindvibe_project.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt

@@ -1,0 +1,20 @@
+{% extends 'outfits/base.html' %}
+{% load static %}
+
+{% block title %}ยืนยันการชำระเงิน - MindVibe{% endblock %}
+
+{% block content %}
+<div class="payment-confirm">
+    <h2>แนบสลิปการโอนเงิน</h2>
+    <p>ยอดรวม: <strong>฿{{ cart.total_price|floatformat:2 }}</strong></p>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">ยืนยันการชำระเงิน</button>
+    </form>
+
+    <br>
+    <a href="{% url 'outfits:payment' %}" class="btn btn-secondary">ย้อนกลับ</a>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'outfits/base.html' %}
+{% load static %}
+
+{% block title %}การชำระเงินสำเร็จ - MindVibe{% endblock %}
+
+{% block content %}
+<div class="payment-success">
+    <h2>✅ การชำระเงินเสร็จสมบูรณ์</h2>
+    <p>ขอบคุณที่ใช้บริการ MindVibe!</p>
+    <a href="{% url 'outfits:home' %}" class="btn btn-primary">กลับสู่หน้าแรก</a>
+</div>
+{% endblock %}

@@ -8,3 +8,6 @@ class OutfitForm(forms.ModelForm):
 
 class RentForm(forms.Form):
     duration = forms.IntegerField(min_value=1, label="ระยะเวลาเช่า (วัน)")
+
+class PaymentConfirmationForm(forms.Form):
+    slip = forms.ImageField(label="อัปโหลดสลิปการโอน")
