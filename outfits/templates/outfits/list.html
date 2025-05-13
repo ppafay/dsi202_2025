@@ -1,150 +1,290 @@
 {% extends "outfits/base.html" %}
 {% load static %}
 
-{% block title %}ชุดทั้งหมด - MindVibe 🌸{% endblock %}
+{% block title %}
+    {% if current_category %}{{ current_category.name }} - MindVibe 🌸{% else %}ชุดทั้งหมด - MindVibe 🌸{% endif %}
+{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{% static 'outfits/list.css' %}">
-<style>
-  .search-form {
-    max-width: 600px;
-    margin: 0 auto var(--space-8);
-    display: flex;
-    gap: var(--space-3);
-  }
+    {# <link rel="stylesheet" href="{% static 'outfits/list.css' %}"> #}
+    {# เราจะใช้ inline styles หรือย้ายไปรวมใน styles.css หรือ list.css ใหม่ #}
+    <style>
+        /* Minimalist Styles for Outfit List Page */
 
-  .search-form input {
-    flex: 1;
-    border-radius: var(--border-radius-pill);
-    padding: var(--space-3);
-    font-size: 1rem;
-  }
+        /* Search Form Refinements */
+        .search-form-container {
+            margin-bottom: var(--space-10); /* More space below search */
+            background-color: var(--background-card); /* Optional: card-like background for search */
+            padding: var(--space-6);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        .search-form {
+            display: flex;
+            gap: var(--space-3);
+            max-width: 700px; /* Control max width of search form itself */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-form input.form-control { /* Inherits from global .form-control */
+            flex-grow: 1;
+            border-radius: var(--border-radius-pill); /* Pill shape */
+            padding-left: var(--space-5); /* More padding for text */
+            font-size: 1rem;
+            box-shadow: none; /* Remove default form-control shadow if any */
+        }
+        .search-form .btn { /* Search button */
+            border-radius: var(--border-radius-pill);
+            padding-left: var(--space-6); /* More padding for button text */
+            padding-right: var(--space-6);
+            white-space: nowrap; /* Prevent button text wrapping */
+            box-shadow: var(--shadow-xs);
+        }
+        .search-form .btn:hover {
+            box-shadow: var(--shadow-sm);
+        }
 
-  .search-form .btn {
-    border-radius: var(--border-radius-pill);
-    padding: var(--space-2) var(--space-4);
-    white-space: nowrap;
-  }
+        /* Categories Navigation/Filter (Optional Sidebar or Top Bar) */
+        .category-nav-container {
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-color-divider);
+        }
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            justify-content: center; /* Center align category links */
+        }
+        .category-nav .nav-link {
+            padding: var(--space-2) var(--space-4);
+            color: var(--text-secondary);
+            border-radius: var(--border-radius-pill);
+            border: 1px solid var(--border-color-soft);
+            transition: var(--transition-std);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .category-nav .nav-link:hover,
+        .category-nav .nav-link.active {
+            background-color: var(--primary-action-bg); /* Use primary color (pink) */
+            color: var(--primary-action-text);
+            border-color: var(--primary-action-bg);
+            text-decoration: none;
+        }
 
-  .outfit-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--space-8);
-  }
 
-  .outfit-card {
-    background-color: var(--background-card);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+        /* Outfit Grid & Cards - Minimal & Clean */
+        .outfit-grid-container {
+            /* Container for the grid if needed for additional padding/margin */
+        }
+        .outfit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); /* Responsive columns */
+            gap: var(--space-6); /* Consistent gap */
+        }
 
-  .outfit-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
+        .outfit-card {
+            background-color: var(--background-card);
+            border-radius: var(--border-radius-lg); /* Softer radius */
+            box-shadow: var(--shadow-sm);
+            overflow: hidden; /* Ensures image corners match card radius */
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: 1px solid var(--border-color-soft); /* Subtle border */
+        }
+        .outfit-card:hover {
+            transform: translateY(-5px); /* Slightly more lift */
+            box-shadow: var(--shadow-md);
+        }
 
-  .outfit-card img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border-bottom: 1px solid var(--border-color-divider);
-  }
+        .outfit-card .image-link { /* <a> tag wrapping the image */
+            display: block;
+            background-color: var(--nature-green-light); /* Placeholder bg if image is transparent or loading */
+            aspect-ratio: 4 / 5; /* Maintain aspect ratio for images */
+            overflow: hidden; /* Ensure image zoom doesn't break layout */
+        }
+        .outfit-card img {
+            width: 100%;
+            height: 100%; /* Fill the aspect-ratio container */
+            object-fit: cover; /* Cover the area without distorting */
+            transition: transform 0.35s ease-out; /* Smoother zoom */
+        }
+        .outfit-card:hover img {
+            transform: scale(1.05); /* Subtle zoom on hover */
+        }
 
-  .card-content {
-    padding: var(--space-5);
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+        .card-content {
+            padding: var(--space-4); /* Consistent padding */
+            flex-grow: 1; /* Allows button to stick to bottom */
+            display: flex;
+            flex-direction: column;
+        }
+        .card-content h3 {
+            font-size: 1.2rem; /* Slightly larger for better hierarchy */
+            font-weight: 600; /* Bolder title */
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+            line-height: 1.4;
+        }
+        .card-content h3 a {
+            color: inherit; /* Inherit color from h3 */
+            text-decoration: none;
+        }
+        .card-content h3 a:hover {
+            color: var(--primary-action-bg); /* Pink hover for title link */
+        }
 
-  .card-content h3 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: var(--space-2);
-  }
+        .category-link { /* Style for category link below title */
+            font-size: 0.8rem;
+            color: var(--text-light); /* Lighter text */
+            margin-bottom: var(--space-2);
+            display: inline-block; /* To allow margin-bottom */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .category-link:hover {
+            color: var(--link-color); /* Use link hover color */
+        }
 
-  .price-tag {
-    font-weight: 500;
-    color: var(--primary-action-bg);
-    margin-bottom: var(--space-4);
-  }
+        .price-tag {
+            font-size: 1.1rem; /* Prominent price */
+            font-weight: 600; /* Bolder price */
+            color: var(--primary-action-bg); /* Pink price */
+            margin-bottom: var(--space-4);
+        }
 
-  .add_to_cart_form {
-    display: flex;
-    gap: var(--space-3);
-    align-items: center;
-  }
+        .add_to_cart_form { /* Form for add to cart button */
+            margin-top: auto; /* Pushes button to the bottom of the card */
+        }
+        .add_to_cart_form .btn-primary {
+            width: 100%; /* Full width button in card */
+            padding: var(--space-3) var(--space-4); /* Adjust button padding */
+            font-size: 0.9rem;
+             /* border-radius: var(--border-radius-md); /* Or keep pill shape if preferred globally */
+        }
+        /* Hide quantity selector for list page as per new requirements */
+        .add_to_cart_form .quantity-selector {
+            display: none;
+        }
 
-  .quantity-selector input {
-    max-width: 60px;
-    padding: var(--space-2);
-    border-radius: var(--border-radius-md);
-    text-align: center;
-  }
 
-  .btn-primary {
-    border-radius: var(--border-radius-pill);
-    padding: var(--space-2) var(--space-4);
-  }
+        .no-outfits-found {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-secondary); /* Use secondary text color */
+            margin-top: var(--space-16); /* More top margin */
+            padding: var(--space-8);
+            background-color: var(--background-card);
+            border-radius: var(--border-radius-lg);
+            border: 1px dashed var(--border-color-divider);
+        }
 
-  .no-outfits-found {
-    text-align: center;
-    font-size: 1.1rem;
-    color: var(--text-light);
-    margin-top: var(--space-12);
-  }
-</style>
+        /* Responsive adjustments for outfit grid specifically */
+        @media (max-width: 576px) { /* Small mobile */
+            .outfit-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Adjust minmax for smaller cards */
+                gap: var(--space-4);
+            }
+            .card-content h3 {
+                font-size: 1.1rem;
+            }
+            .price-tag {
+                font-size: 1rem;
+            }
+            .search-form {
+                flex-direction: column; /* Stack search input and button */
+            }
+            .search-form .btn {
+                width: 100%; /* Full width search button on mobile */
+            }
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2 class="page-title">เลือกชุดที่ใช่สำหรับคุณ</h2>
 
-  <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
-    <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q }}" class="form-control">
-    <button type="submit" class="btn btn-secondary">ค้นหา</button>
-  </form>
-
-  {% if outfits %}
-  <div class="outfit-grid">
-    {% for outfit in outfits %}
-    <div class="outfit-card">
-      <a href="{% url 'outfits:outfit-detail' outfit.id %}" class="image-link">
-        {% if outfit.image %}
-          <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
-        {% else %}
-          <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available">
+    {# Title Section #}
+    {% if current_category %}
+        <h2 class="page-title">ชุดในหมวดหมู่: {{ current_category.name }}</h2>
+        {% if current_category.description %}
+            <p class="text-center text-secondary mb-5">{{ current_category.description }}</p>
         {% endif %}
-      </a>
-      <div class="card-content">
-        <h3><a href="{% url 'outfits:outfit-detail' outfit.id %}">{{ outfit.name }}</a></h3>
-        <p class="price-tag">฿{{ outfit.price|floatformat:2 }} / วัน</p>
-
-        <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="add_to_cart_form">
-          {% csrf_token %}
-          <div class="quantity-selector">
-            <label for="quantity_{{ outfit.id }}" class="sr-only">จำนวน</label>
-            <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1" class="form-control quantity-input">
-          </div>
-          <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
-        </form>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p class="no-outfits-found">
-    {% if request.GET.q %}
-      ไม่พบชุดที่ตรงกับคำค้นหา "{{ request.GET.q }}" ลองค้นหาด้วยคำอื่นดูนะคะ
     {% else %}
-      ยังไม่มีชุดในระบบเลยค่ะ ลองแวะมาใหม่เร็วๆนี้นะคะ
+        <h2 class="page-title">เลือกชุดที่ใช่สำหรับคุณ</h2>
     {% endif %}
-  </p>
-  {% endif %}
+
+    {# Search Form Section #}
+    <div class="search-form-container">
+        <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
+            <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q|default:'' }}" class="form-control">
+            <button type="submit" class="btn btn-primary">ค้นหา</button> {# Changed to btn-primary for better CTA #}
+        </form>
+    </div>
+
+    {# Categories Navigation (Optional - if you have categories to filter by) #}
+    {% if all_categories %}
+    <div class="category-nav-container">
+        <nav class="category-nav" aria-label="Outfit categories">
+            <a href="{% url 'outfits:outfit-list' %}" class="nav-link {% if not current_category %}active{% endif %}">ชุดทั้งหมด</a>
+            {% for cat in all_categories %}
+                <a href="{{ cat.get_absolute_url }}" class="nav-link {% if current_category and current_category.slug == cat.slug %}active{% endif %}">
+                    {{ cat.name }}
+                </a>
+            {% endfor %}
+        </nav>
+    </div>
+    {% endif %}
+
+
+    {# Outfit Grid Section #}
+    <div class="outfit-grid-container">
+        {% if outfits %}
+        <div class="outfit-grid">
+            {% for outfit in outfits %}
+            <div class="outfit-card">
+                <a href="{% url 'outfits:outfit-detail' outfit.id %}" class="image-link" aria-label="ดูรายละเอียดชุด {{ outfit.name }}">
+                    {% if outfit.image and outfit.image.url %}
+                        <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
+                    {% else %}
+                        <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="ไม่มีรูปภาพสำหรับ {{ outfit.name }}">
+                    {% endif %}
+                </a>
+                <div class="card-content">
+                    <div> {# Wrapper for title, category, price for better spacing control #}
+                        <h3><a href="{% url 'outfits:outfit-detail' outfit.id %}">{{ outfit.name }}</a></h3>
+                        {% if outfit.category %}
+                            <p class="category-link mb-2">
+                                <a href="{{ outfit.category.get_absolute_url }}">{{ outfit.category.name }}</a>
+                            </p>
+                        {% endif %}
+                        <p class="price-tag">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+                    </div>
+
+                    <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="add_to_cart_form mt-auto">
+                        {% csrf_token %}
+                        {# Quantity selector is hidden as per requirement for rentals to be 1 #}
+                        {# <input type="hidden" name="quantity" value="1"> #}
+                        <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-outfits-found">
+            {% if current_category %}
+                ไม่พบชุดในหมวดหมู่ "{{ current_category.name }}" ในขณะนี้
+            {% elif request.GET.q %}
+                ไม่พบชุดที่ตรงกับคำค้นหา "{{ request.GET.q }}" ลองค้นหาด้วยคำอื่นดูนะคะ
+            {% else %}
+                ยังไม่มีชุดในระบบเลยค่ะ ลองแวะมาใหม่เร็วๆนี้นะคะ
+            {% endif %}
+        </p>
+        {% endif %}
+    </div> {# End outfit-grid-container #}
 </div>
 {% endblock %}

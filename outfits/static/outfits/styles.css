@@ -1,74 +1,75 @@
-/* outfits/static/outfits/styles.css - PINK AS PRIMARY, MINIMAL REFINEMENT */
+/* outfits/static/outfits/styles.css - PROFESSIONAL MINIMAL REFINEMENT (PINK AS PRIMARY) */
 
 :root {
-  /* --- Color Palette (เน้นชมพูเป็นหลัก) --- */
-  --pastel-pink-light: #FEF6F9; /* ชมพูอ่อนมากสำหรับพื้นหลัง accent หรือ hover บางๆ */
-  --pastel-pink-main: #FADADD;  /* ชมพูพาสเทลหลัก */
-  --pastel-pink-strong: #F4B6C2; /* ชมพูเข้มขึ้นสำหรับ action หรือ hover ที่เด่นชัด */
-  --pastel-pink-darker: #E6A5B2; /* ชมพูเข้มมาก สำหรับ text บนพื้นชมพูอ่อน หรือ border */
+  /* --- Enhanced Color Palette (เน้นชมพูเป็นหลัก) --- */
+  --pastel-pink-light: #FEF6F9;   /* ชมพูอ่อนมากสำหรับพื้นหลัง accent หรือ hover บางๆ */
+  --pastel-pink-main: #FADADD;    /* ชมพูพาสเทลหลัก */
+  --pastel-pink-strong: #F4B6C2;  /* ชมพูเข้มขึ้นสำหรับ action หรือ hover ที่เด่นชัด */
+  --pastel-pink-darker: #E6A5B2;  /* ชมพูเข้มมาก สำหรับ text บนพื้นชมพูอ่อน หรือ border */
 
-  --nature-green-light: #E6F4F0;
-  --nature-green-main: #A7D7C5;   /* เขียวมิ้นท์สำหรับ secondary action หรือ accent รอง */
-  --nature-green-dark: #82C0AC;
+  --nature-green-light: #EBF7F3; /* ปรับให้สว่างขึ้นเล็กน้อย */
+  --nature-green-main: #A7D7C5;    /* เขียวมิ้นท์สำหรับ secondary action หรือ accent รอง */
+  --nature-green-dark: #7FBCA8;   /* ปรับให้เข้มขึ้นเล็กน้อย */
 
-  --text-primary: #3D4F53;      /* สีเทาเข้มเกือบดำสำหรับเนื้อหาหลัก */
-  --text-secondary: #6C7A80;    /* สีเทากลางสำหรับเนื้อหารอง */
-  --text-light: #98A5A9;       /* สีเทาอ่อนสำหรับ placeholder, hint */
-  --text-on-primary-action: #FFFFFF; /* สีขาวสำหรับข้อความบนปุ่มสีชมพูเข้ม */
-  --text-on-secondary-action: var(--text-primary); /* สีข้อความบนปุ่มสีเขียว */
+  --text-primary: #2c3e50;        /* Dark slate blue/grey for primary text */
+  --text-secondary: #7f8c8d;      /* Medium grey for secondary text */
+  --text-light: #a1adb5;          /* Lighter grey for hints, placeholders */
+  --text-on-primary-action: #FFFFFF; /* White text on pink buttons for contrast */
+  --text-on-secondary-action: #2c3e50; /* Dark text on green buttons for contrast */
 
-  --background-main: #fdfdfe;   /* สีขาวนวลมากๆ สบายตา */
+  --background-main: #f8f9fc;     /* Very light, almost white-grey, clean & modern */
   --background-card: #FFFFFF;
-  --background-accent: var(--nature-green-light); /* พื้นหลัง accent เป็นเขียวอ่อนๆ แทนชมพู */
+  --background-accent: var(--nature-green-light); /* Accent background for sections like categories */
 
-  --border-color-soft: #EFF3F6;  /* สีนุ่มนวลขึ้นอีก */
-  --border-color-input: #CBD5E0;
-  --border-color-divider: #E5E7EB;
+  --border-color-soft: #e9ecef;    /* Softer, slightly more visible border */
+  --border-color-input: #ced4da;   /* Standard input border */
+  --border-color-divider: #dee2e6; /* For dividers and subtle lines */
 
   /* --- Font Variables --- */
-  --font-primary: 'Kanit', 'Poppins', sans-serif;
+  --font-primary: 'Kanit', 'Poppins', sans-serif; /* Kanit for more prominent text */
+  --font-secondary: 'Poppins', sans-serif;   /* Poppins for body or less prominent text */
   --font-headings: 'Poppins', 'Kanit', sans-serif;
 
   /* --- Semantic Color Variables (ชมพูเป็นหลัก) --- */
-  --primary-action-bg: var(--pastel-pink-strong);         /* <<< สีชมพูเข้มสำหรับปุ่มหลัก */
-  --primary-action-text: var(--text-on-primary-action); /* สีขาว */
-  --primary-action-hover-bg: var(--pastel-pink-darker);   /* <<< ชมพูเข้มขึ้นไปอีกตอน hover */
+  --primary-action-bg: var(--pastel-pink-strong);
+  --primary-action-text: var(--text-on-primary-action);
+  --primary-action-hover-bg: var(--pastel-pink-darker);
 
-  --secondary-action-bg: var(--nature-green-main);      /* <<< สีเขียวสำหรับปุ่มรอง */
+  --secondary-action-bg: var(--nature-green-main);
   --secondary-action-text: var(--text-on-secondary-action);
   --secondary-action-hover-bg: var(--nature-green-dark);
 
-  --link-color: var(--pastel-pink-darker);              /* <<< ลิงก์เป็นสีชมพูเข้ม */
-  --link-hover-color: var(--nature-green-dark);         /* <<< hover ลิงก์เป็นสีเขียวเข้ม */
+  --link-color: var(--pastel-pink-darker);
+  --link-hover-color: var(--nature-green-dark);
 
-  /* --- Spacing & Sizing (เหมือนเดิมจากครั้งก่อน) --- */
+  /* --- Spacing & Sizing --- */
   --space-unit: 8px;
   --space-0-5: 0.125rem; --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
-  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
-  --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+  --space-4: 1rem;     --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
+  --space-10: 2.5rem;  --space-12: 3rem;   --space-16: 4rem;
 
   --border-radius-sm: 4px; --border-radius-md: 6px; --border-radius-lg: 8px;
-  --border-radius-xl: 12px; --border-radius-pill: 9999px;
+  --border-radius-xl: 12px; --border-radius-pill: 50px; /* More standard pill shape */
 
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 20px -5px rgba(0, 0, 0, 0.07), 0 4px 8px -4px rgba(0, 0, 0, 0.07);
 
-  --transition-fast: all 0.15s ease-in-out;
-  --transition-std: all 0.25s ease-in-out;
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-std: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ===== GLOBAL RESETS & BASE STYLES (เหมือนเดิมจากครั้งก่อน) ===== */
+/* ===== GLOBAL RESETS & BASE STYLES ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; height: 100%; }
 body {
-  font-family: var(--font-primary);
+  font-family: var(--font-secondary); /* Use Poppins for body for slightly softer feel */
   background-color: var(--background-main);
   color: var(--text-secondary);
-  line-height: 1.75;
+  line-height: 1.7; /* Good for readability */
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 1rem; /* Approx 16px */
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -79,150 +80,271 @@ main { flex-grow: 1; padding-top: var(--space-10); padding-bottom: var(--space-1
 a { color: var(--link-color); text-decoration: none; transition: var(--transition-fast); }
 a:hover, a:focus { color: var(--link-hover-color); text-decoration: underline; outline: none; }
 img, svg, video { display: block; max-width: 100%; height: auto; }
-.container { width: 92%; max-width: 1280px; margin-left: auto; margin-right: auto; padding-left: var(--space-4); padding-right: var(--space-4); }
+.container { width: 90%; max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: var(--space-5); padding-right: var(--space-5); }
 
-/* ===== TYPOGRAPHY (เหมือนเดิมจากครั้งก่อน) ===== */
+/* ===== TYPOGRAPHY ===== */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-headings); font-weight: 600; line-height: 1.35;
+  font-family: var(--font-headings); font-weight: 600; line-height: 1.3;
   margin-bottom: var(--space-4); color: var(--text-primary);
 }
-h1 { font-size: clamp(2rem, 5vw, 2.75rem); letter-spacing: -0.02em; }
-h2 { font-size: clamp(1.75rem, 4vw, 2.25rem); letter-spacing: -0.01em; }
+h1 { font-size: clamp(2rem, 5vw, 2.75rem); letter-spacing: -0.025em; margin-bottom: var(--space-6); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.25rem); letter-spacing: -0.015em; margin-bottom: var(--space-5); }
 h3 { font-size: clamp(1.375rem, 3.5vw, 1.875rem); }
-h4 { font-size: clamp(1.2rem, 3vw, 1.5rem); }
-p { margin-bottom: var(--space-4); color: var(--text-secondary); }
+h4 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 500; } /* H4 slightly less bold */
+p { margin-bottom: var(--space-4); color: var(--text-secondary); font-family: var(--font-secondary); }
 p:last-of-type { margin-bottom: 0; }
-.page-title { font-size: clamp(2rem, 6vw, 2.5rem); text-align: center; margin-bottom: var(--space-10); font-weight: 700; }
+.page-title { font-size: clamp(2rem, 6vw, 2.5rem); text-align: center; margin-bottom: var(--space-10); font-weight: 700; color: var(--text-primary); }
 
-/* ===== HEADER & NAVIGATION (ปรับสี accent) ===== */
+/* ===== HEADER & NAVIGATION ===== */
 header {
-  background-color: var(--background-card); padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border-color-soft); position: sticky; top: 0; z-index: 1050;
+  background-color: var(--background-card); padding: var(--space-4) 0; /* Slightly more padding */
+  border-bottom: 1px solid var(--border-color-divider); position: sticky; top: 0; z-index: 1050;
   box-shadow: var(--shadow-sm);
 }
 .header-container { display: flex; justify-content: space-between; align-items: center; }
-header h1 a { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
-header h1 a:hover { color: var(--primary-action-bg); text-decoration: none; } /* <<< ใช้สีชมพูเมื่อ hover ชื่อเว็บ */
-header h1 .icon-flower { color: var(--primary-action-bg); font-size: 1em; margin-left: var(--space-1); vertical-align: baseline; } /* <<< icon ดอกไม้เป็นสีชมพู */
+header h1 a { font-size: 1.6rem; font-weight: 700; color: var(--primary-action-bg); /* Pink site title */ letter-spacing: -0.5px; }
+header h1 a:hover { color: var(--pastel-pink-darker); text-decoration: none; }
+header h1 .icon-flower { color: var(--nature-green-main); font-size: 0.9em; margin-left: var(--space-1); vertical-align: text-bottom; }
 
-.nav-toggler { /* (เหมือนเดิม) */ }
-nav .nav-links { /* (เหมือนเดิม) */ }
-nav .nav-links li { /* (เหมือนเดิม) */ }
-nav .nav-links li:first-child { /* (เหมือนเดิม) */ }
+.nav-toggler { display: none; font-size: 1.75rem; background: transparent; border: none; color: var(--text-primary); cursor: pointer; padding: var(--space-2); line-height: 1; z-index: 1100; }
+nav .nav-links { list-style: none; display: flex; align-items: center; }
+nav .nav-links li { margin-left: var(--space-5); } /* Slightly less space */
+nav .nav-links li:first-child { margin-left: 0; }
 nav .nav-links li a, nav .nav-links li .nav-link-button {
-  /* (สไตล์เหมือนเดิม) */
-  color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;
+  color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; /* Slightly smaller nav text */
   padding: var(--space-2) var(--space-1); position: relative; letter-spacing: 0.3px;
   text-decoration: none; transition: var(--transition-fast);
   background: none; border: none; cursor: pointer; font-family: inherit;
 }
 nav .nav-links li a::after {
-  /* (สไตล์เหมือนเดิม) */
-  background-color: var(--primary-action-bg); /* <<< ขีดเส้นใต้เป็นสีชมพู */
+  content: ''; position: absolute; width: 0; height: 2px; bottom: var(--space-0-5); /* Closer to text */
+  left: 0; background-color: var(--primary-action-bg); transition: width var(--transition-std);
 }
 nav .nav-links li a:hover::after, nav .nav-links li a.active::after { width: 100%; }
 nav .nav-links li a:hover, nav .nav-links li a.active, nav .nav-links li .nav-link-button:hover {
-  color: var(--primary-action-bg); /* <<< hover เป็นสีชมพู */
+  color: var(--primary-action-bg); text-decoration: none;
 }
 
-/* ===== BUTTONS (ใช้สีชมพูเป็นหลัก) ===== */
-.btn { /* (สไตล์พื้นฐานเหมือนเดิม) */ }
-.btn:hover { /* (เหมือนเดิม) */ }
-.btn:focus-visible { outline: 2px solid var(--primary-action-bg); outline-offset: 2px; } /* <<< focus ring เป็นสีชมพู */
-.btn:active { /* (เหมือนเดิม) */ }
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-block; font-family: var(--font-headings); /* Use heading font for buttons */ font-weight: 500; text-align: center;
+  vertical-align: middle; cursor: pointer; user-select: none; background-color: transparent;
+  border: 1px solid transparent; padding: var(--space-3) var(--space-6); /* More horizontal padding */
+  font-size: 0.9rem; line-height: 1.5; border-radius: var(--border-radius-pill); /* Default to pill shape */
+  transition: var(--transition-std); letter-spacing: 0.5px; /* More spacing */ text-decoration: none;
+  box-shadow: var(--shadow-xs);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); text-decoration: none; }
+.btn:focus-visible { outline: 2px solid var(--primary-action-bg); outline-offset: 2px; }
+.btn:active { transform: translateY(0); box-shadow: var(--shadow-xs); }
 
 .btn-primary {
-  color: var(--text-on-primary-action); /* ตัวอักษรสีขาว */
-  background-color: var(--primary-action-bg); /* พื้นหลังสีชมพู */
-  border-color: var(--primary-action-bg); /* เส้นขอบสีชมพู */
+  color: var(--text-on-primary-action); background-color: var(--primary-action-bg);
+  border-color: var(--primary-action-bg);
 }
 .btn-primary:hover {
-  background-color: var(--primary-action-hover-bg); /* ชมพูเข้มขึ้นเมื่อ hover */
-  border-color: var(--primary-action-hover-bg);
+  background-color: var(--primary-action-hover-bg); border-color: var(--primary-action-hover-bg);
   color: var(--text-on-primary-action);
 }
 
-.btn-secondary { /* ปุ่มรองเป็นสีเขียว */
-  color: var(--text-on-secondary-action);
-  background-color: var(--secondary-action-bg);
+.btn-secondary {
+  color: var(--text-on-secondary-action); background-color: var(--secondary-action-bg);
   border-color: var(--secondary-action-bg);
 }
 .btn-secondary:hover {
-  background-color: var(--secondary-action-hover-bg);
-  border-color: var(--secondary-action-hover-bg);
+  background-color: var(--secondary-action-hover-bg); border-color: var(--secondary-action-hover-bg);
 }
 
-.btn-outline-primary { /* ปุ่ม outline ชมพู */
-  color: var(--primary-action-bg);
-  border-color: var(--primary-action-bg);
+.btn-outline-primary {
+  color: var(--primary-action-bg); border-color: var(--primary-action-bg);
 }
 .btn-outline-primary:hover {
-  color: var(--text-on-primary-action);
-  background-color: var(--primary-action-bg);
+  color: var(--text-on-primary-action); background-color: var(--primary-action-bg);
 }
+.btn-lg { padding: var(--space-4) var(--space-8); font-size: 1rem; }
+.btn-sm { padding: var(--space-2) var(--space-4); font-size: 0.8rem; letter-spacing: 0.3px;}
 
-/* ===== FORMS (ปรับสี focus) ===== */
-.form-group { /* (เหมือนเดิม) */ }
-label, .form-label { /* (เหมือนเดิม) */ }
-.form-control { /* (สไตล์พื้นฐานเหมือนเดิม) */ }
-.form-control::placeholder { /* (เหมือนเดิม) */ }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: var(--space-5); }
+label, .form-label { display: block; margin-bottom: var(--space-2); font-weight: 500; font-size: 0.9rem; color: var(--text-primary); }
+.form-control {
+  display: block; width: 100%; padding: var(--space-3) var(--space-4);
+  font-size: 0.95rem; font-weight: 400; line-height: 1.6; color: var(--text-primary);
+  background-color: var(--background-card); background-clip: padding-box;
+  border: 1px solid var(--border-color-input); border-radius: var(--border-radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: none;
+}
+.form-control::placeholder { color: var(--text-light); opacity: 1; }
 .form-control:focus {
-  border-color: var(--primary-action-bg); /* <<< เส้นขอบตอน focus เป็นสีชมพู */
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(244, 182, 194, 0.3); /* <<< focus shadow เป็นสีชมพูอ่อน (ปรับ alpha ตามต้องการ) */
+  border-color: var(--primary-action-bg); outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(244, 182, 194, 0.25); /* Pink focus ring */
 }
-/* ... (ส่วนที่เหลือของ Forms, Alerts, Footer เหมือนเดิมจากครั้งก่อน แต่จะใช้สีใหม่จาก :root โดยอัตโนมัติ) ... */
+input[type="file"].form-control { padding: var(--space-2) var(--space-3); }
+textarea.form-control { min-height: 100px; }
+/* ... (Form Check, ErrorList styling - refined for better spacing and clarity) ... */
+.errorlist, ul.errorlist {
+    list-style: none; padding: 0; margin: var(--space-1) 0 0 0;
+    font-size: 0.875rem; color: #b91c1c;
+}
+ul.errorlist {
+    margin-bottom: var(--space-4); padding: var(--space-3);
+    background-color: #fee2e2; border: 1px solid #fecaca;
+    border-radius: var(--border-radius-sm); text-align: left;
+}
 
-/* ===== AUTHENTICATION PAGE STYLES (ใช้สีชมพูเป็นหลัก) ===== */
+
+/* ===== ALERTS / MESSAGES (from Django messages framework) ===== */
+.messages-container { /* Remove default main padding if messages are present */ }
+.messages-container .alert {
+    padding: var(--space-4); margin-bottom: var(--space-6);
+    border: 1px solid transparent; border-radius: var(--border-radius-md);
+    font-size: 0.95rem; box-shadow: var(--shadow-md);
+    display: flex; align-items: center;
+}
+.alert::before { margin-right: var(--space-3); font-size: 1.2em; }
+.alert-success { color: #14532d; background-color: #dcfce7; border-color: #bbf7d0; }
+.alert-success::before { content: '✔'; color: #166534; }
+.alert-info { color: #175569; background-color: #cffafe; border-color: #a5f3fc; }
+.alert-info::before { content: 'ℹ'; color: #164e63; }
+.alert-danger, .alert-error { color: #7f1d1d; background-color: #fee2e2; border-color: #fecaca; }
+.alert-danger::before, .alert-error::before { content: '❗'; color: #991b1b; }
+
+
+/* ===== FOOTER ===== */
+footer {
+  background-color: var(--background-main); color: var(--text-secondary);
+  padding: var(--space-10) 0 var(--space-6); text-align: center;
+  border-top: 1px solid var(--border-color-divider);
+  font-size: 0.9rem; flex-shrink: 0;
+}
+.footer-nav { margin-bottom: var(--space-3); }
+.footer-nav a { color: var(--text-secondary); margin: 0 var(--space-3); font-weight: 400; }
+.footer-nav a:hover { color: var(--primary-action-bg); text-decoration: underline; }
+footer p { margin-top: var(--space-2); font-size: 0.85rem; }
+
+/* ===== RESPONSIVE DESIGN ADJUSTMENTS ===== */
+@media (max-width: 992px) { /* Tablets */
+    .container { width: 95%; }
+    h1 { font-size: clamp(1.8rem, 4.5vw, 2.25rem); }
+    h2, .page-title { font-size: clamp(1.6rem, 3.8vw, 1.875rem); }
+    main { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+}
+
+@media (max-width: 768px) { /* Mobile devices */
+    html { font-size: 93.75%; } /* ~15px base */
+    body { line-height: 1.65; }
+    .container { padding-left: var(--space-4); padding-right: var(--space-4); }
+
+    header { padding: var(--space-3) 0; } /* Increased mobile header padding */
+    header h1 a { font-size: 1.3rem; }
+
+    nav .nav-links {
+        display: none; flex-direction: column; position: absolute;
+        top: calc(100% + 1px); left: 0; right: 0; /* Ensure it's below header border */
+        background-color: var(--background-card); box-shadow: var(--shadow-lg);
+        border-top: 1px solid var(--border-color-divider); /* Clearer divider */
+        z-index: 1040;
+        padding-bottom: var(--space-2);
+    }
+    nav .nav-links.active { display: flex; }
+    nav .nav-links li { margin-left: 0; width: 100%; }
+    nav .nav-links li a, nav .nav-links li .nav-link-button {
+        display: block; padding: var(--space-3) var(--space-4); /* Adjusted padding */
+        text-align: left; width: 100%; border-bottom: 1px solid var(--border-color-soft);
+        font-size: 1rem; /* Larger tap target text */
+    }
+    nav .nav-links li:last-child a, nav .nav-links li:last-child .nav-link-button { border-bottom: none; }
+    nav .nav-links li a::after { display:none; }
+    .nav-toggler { display: block; }
+
+    .page-title { font-size: clamp(1.5rem, 5vw, 1.875rem); margin-bottom: var(--space-8); }
+    main { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+
+    .btn { padding: var(--space-3) var(--space-5); font-size: 0.95rem; }
+    .btn-lg { padding: var(--space-4) var(--space-6); font-size: 1rem; }
+}
+
+@media (max-width: 576px) { /* Smaller mobile devices */
+    h1 { font-size: 1.75rem; }
+    h2, .page-title { font-size: 1.5rem; }
+}
+
+
+/* ===== AUTHENTICATION PAGE STYLES (INTEGRATED & REFINED) ===== */
 .auth-container {
-    /* ... (เหมือนเดิม) ... */
-    background-color: var(--nature-green-light); /* <<< เปลี่ยนพื้นหลัง Auth container เป็นเขียวอ่อนๆ เพื่อให้การ์ดชมพูเด่น */
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    min-height: calc(100vh - 180px); /* Adjusted for typical header/footer height */
+    padding: var(--space-6) var(--space-4);
+    background-color: var(--nature-green-light); /* Accent background for auth pages */
 }
 .auth-card {
-    /* ... (เหมือนเดิม) ... */
-    /* อาจจะเพิ่ม border สีชมพูอ่อนๆ ถ้าต้องการ */
-    /* border: 1px solid var(--pastel-pink-main); */
+    background: var(--background-card);
+    padding: var(--space-6) var(--space-8); /* More padding for auth card */
+    max-width: 420px; width: 100%;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    border: 1px solid var(--border-color-divider); /* Subtle border for card */
 }
-.auth-card h2 { /* (เหมือนเดิม) */ }
-.auth-card p.auth-intro { /* (เหมือนเดิม) */ }
+.auth-card h2 { font-size: 1.75rem; color: var(--text-primary); margin-bottom: var(--space-3); font-weight: 600; }
+.auth-card p.auth-intro { font-size: 1rem; color: var(--text-secondary); margin-bottom: var(--space-6); line-height: 1.6; }
 
-.google-btn { /* (เหมือนเดิม) */ }
-.google-btn:hover { /* (เหมือนเดิม) */ }
-.google-btn img { /* (เหมือนเดิม) */ }
-
-.divider { /* (เหมือนเดิม) */ }
-.divider::before, .divider::after { /* (เหมือนเดิม) */ }
-.divider span { /* (เหมือนเดิม) */ }
-
-.auth-form button[type="submit"] { /* ปุ่ม Submit ในหน้า Auth จะเป็นสีชมพู (primary) */
-    background-color: var(--primary-action-bg);
-    color: var(--text-on-primary-action);
-    border-color: var(--primary-action-bg);
-    /* ... (สไตล์อื่นๆ เหมือน .btn-primary) ... */
-    padding: var(--space-3); width: 100%; font-weight: 500; font-size: 1rem;
-    border-radius: var(--border-radius-md); cursor: pointer; transition: var(--transition-std);
-    margin-top: var(--space-2); box-shadow: var(--shadow-sm);
+.social-login-section { margin-bottom: var(--space-6); }
+.google-btn, .google-btn-social-submit { /* Unified style for Google buttons */
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3);
+    background: var(--background-card); border: 1px solid var(--border-color-input);
+    border-radius: var(--border-radius-md); padding: var(--space-3) var(--space-5);
+    font-weight: 500; font-size: 0.95rem; cursor: pointer; text-decoration: none;
+    color: var(--text-primary); width: 100%; max-width: 340px;
+    margin: 0 auto var(--space-4); transition: var(--transition-fast);
+    box-shadow: var(--shadow-xs);
 }
-.auth-form button[type="submit"]:hover {
-    background-color: var(--primary-action-hover-bg);
-    border-color: var(--primary-action-hover-bg);
-    box-shadow: var(--shadow-md);
-}
+.google-btn:hover, .google-btn-social-submit:hover { background-color: #f8f9fa; border-color: #adb5bd; box-shadow: var(--shadow-sm); }
+.google-btn img, .google-btn-social-submit img { width: 20px; height: 20px; }
 
-.auth-card .bottom-text a {
-    color: var(--link-color); /* ลิงก์ด้านล่างเป็นสีชมพู (ตาม --link-color ใหม่) */
+.divider {
+    display: flex; align-items: center; text-align: center; margin: var(--space-6) 0;
+    color: var(--text-light); font-size: 0.85rem; text-transform: uppercase;
 }
-.auth-card .bottom-text a:hover {
-    color: var(--link-hover-color); /* hover เป็นสีเขียว */
-}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color-divider); }
+.divider span { padding: 0 var(--space-4); font-weight: 500; }
 
-/* Minimal Payment Page Styles (ใช้สีชมพูเป็นหลักสำหรับ Action) */
+.auth-form { margin-top: var(--space-6); }
+.auth-form button[type="submit"] { /* Inherits .btn .btn-primary styles if classes are applied in HTML */
+    width: 100%; /* Ensure full width if needed */
+    margin-top: var(--space-4); /* More space above submit button */
+}
+.auth-card .bottom-text { margin-top: var(--space-6); font-size: 0.9rem; color: var(--text-secondary); }
+.auth-card .bottom-text a { color: var(--link-color); font-weight: 500; }
+.auth-card .bottom-text a:hover { color: var(--link-hover-color); text-decoration: underline; }
+
+/* Minimal Payment Page Styles (Refined) */
+.payment-container, .payment-confirm, .payment-success-container {
+  max-width: 500px; margin: var(--space-12) auto; background-color: var(--background-card);
+  border-radius: var(--border-radius-lg); padding: var(--space-8); box-shadow: var(--shadow-lg);
+  text-align: center; border: 1px solid var(--border-color-divider);
+}
 .payment-container h2, .payment-confirm h2, .payment-success-container h2 {
-  color: var(--text-primary); /* หรือจะใช้ var(--primary-action-bg) ถ้าอยากให้เป็นสีชมพู */
+  color: var(--text-primary); margin-bottom: var(--space-6); font-size: 1.8rem;
 }
-/* ปุ่มในหน้า payment ควรใช้ class .btn .btn-primary (จะเป็นสีชมพู) หรือ .btn .btn-secondary (จะเป็นสีเขียว) */
+.payment-container p, .payment-confirm p, .payment-success-container p {
+  font-size: 1rem; color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.65;
+}
+.payment-container img.qr-code {
+  max-width: 250px; width: 100%; margin: var(--space-4) auto var(--space-8);
+  border-radius: var(--border-radius-sm); padding: var(--space-3); /* More padding around QR */
+  background-color: white; box-shadow: var(--shadow-md);
+}
+.payment-container strong, .payment-confirm strong, .payment-success-container strong {
+    font-weight: 600; color: var(--text-primary);
+}
+.payment-confirm form p { text-align: left; } /* Align form paragraph labels to left */
+.payment-confirm form button.btn-primary { width: 100%; margin-top: var(--space-4); }
+.payment-confirm a.btn-secondary { width: 100%; margin-top: var(--space-3); display: block; }
 
-/* ===== RESPONSIVE STYLES (เหมือนเดิมจากครั้งก่อน) ===== */
-@media (max-width: 992px) { /* (เหมือนเดิม) */ }
-@media (max-width: 768px) { /* (เหมือนเดิม, รวมถึง nav toggler) */ }
-@media (max-width: 576px) { /* (เหมือนเดิม) */ }
+
+/* Additional styling for Order History, Item Cards, etc. would go in their respective
+   CSS files (e.g., order_history.css, list.css, cart.css) or integrated here if widely used.
+   The key is to leverage the :root variables for consistency. */

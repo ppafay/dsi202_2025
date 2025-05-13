@@ -1,23 +1,88 @@
 {% extends "outfits/base.html" %}
+{% load static %}
+{% load i18n %} {# สำหรับข้อความของ allauth ถ้ามี #}
+{% load socialaccount %} {# <<< เพิ่มเข้ามาเพื่อให้แน่ใจว่า tag ของ socialaccount พร้อมใช้งาน #}
 
-{% block title %}Sign in with Google - MindVibe{% endblock %}
+{% block title %}เข้าสู่ระบบด้วย Google - MindVibe{% endblock %}
+
+{% block extra_head %}
+    {# ถ้าคุณมี CSS เฉพาะสำหรับหน้านี้ (auth_social.css) ให้ link ที่นี่ #}
+    {# หรือถ้าสไตล์ทั้งหมดอยู่ใน styles.css หลักแล้ว ก็ไม่จำเป็นต้องเพิ่ม #}
+    {# <link rel="stylesheet" href="{% static 'outfits/auth_styles.css' %}"> #}
+    <style>
+        /* สามารถใส่ inline style เพื่อ override หรือ test ได้ */
+        /* แต่ควรย้ายไปไฟล์ CSS หลักเมื่อเสร็จสิ้น */
+        .auth-card .social-login-instruction {
+            font-size: 1rem; /* ปรับขนาดตามความเหมาะสม */
+            color: var(--text-secondary);
+            margin-bottom: var(--space-6);
+            line-height: 1.6;
+        }
+        .auth-card .google-btn-social { /* สร้าง class ใหม่เพื่อไม่ให้ชนกับ .google-btn เดิมถ้าสไตล์ต่างกัน */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3); /* ระยะห่างระหว่าง icon กับ text */
+            background-color: var(--background-card); /* พื้นหลังสีขาว */
+            border: 1px solid var(--border-color-input); /* เส้นขอบเหมือน input field */
+            color: var(--text-primary); /* สีตัวอักษร */
+            padding: var(--space-3) var(--space-5); /* padding */
+            border-radius: var(--border-radius-md); /* มุมมน */
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            width: 100%; /* เต็มความกว้างการ์ด */
+            max-width: 320px; /* กำหนดความกว้างสูงสุด */
+            margin: 0 auto var(--space-4); /* จัดกลางและเว้นระยะล่าง */
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-xs);
+        }
+        .auth-card .google-btn-social:hover {
+            background-color: #f8f9fa; /* สีพื้นหลังเมื่อ hover */
+            border-color: #adb5bd;
+            box-shadow: var(--shadow-sm);
+        }
+        .auth-card .google-btn-social img {
+            width: 20px;
+            height: 20px;
+        }
+        .auth-card .bottom-text {
+            margin-top: var(--space-6); /* เพิ่มระยะห่างด้านบน */
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
 <div class="auth-container">
   <div class="auth-card">
-    <h2>Sign In via Google 🌐</h2>
-    <p>You're about to sign in using your Google account</p>
+    <h2>ยืนยันการเข้าสู่ระบบด้วย Google 🌐</h2>
+    <p class="social-login-instruction">
+        คุณกำลังจะดำเนินการต่อเพื่อเข้าสู่ระบบ MindVibe ด้วยบัญชี Google ของคุณ
+    </p>
 
-    <form method="post" action="">
+    {# ฟอร์มนี้จะถูก submit เพื่อเริ่มกระบวนการ OAuth กับ Google #}
+    {# allauth จะจัดการ action ของฟอร์มนี้ให้เอง #}
+    <form method="post" action="{% provider_login_url "google" process="login" %}" class="auth-form">
       {% csrf_token %}
-      <button type="submit" class="submit-btn google-btn">
+      {# allauth อาจจะ render hidden fields ที่นี่ ถ้าจำเป็น #}
+      {% if form.errors %}
+        <ul class="errorlist">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary google-btn-social"> {# ใช้ class btn และ btn-primary เพื่อให้ได้สไตล์ปุ่มหลัก #}
         <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google Icon" />
-        Continue with Google
+        ดำเนินการต่อด้วย Google
       </button>
     </form>
 
     <div class="bottom-text">
-      <a href="{% url 'account_login' %}">Back to login</a>
+      <a href="{% url 'account_login' %}"> &larr; กลับไปหน้าเข้าสู่ระบบด้วยอีเมล</a>
     </div>
   </div>
 </div>

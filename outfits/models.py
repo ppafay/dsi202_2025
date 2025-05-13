@@ -4,13 +4,38 @@ from django.db import models
 from decimal import Decimal
 from django.conf import settings
 from django.utils import timezone
+from django.urls import reverse
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name="ชื่อหมวดหมู่")
+    slug = models.SlugField(max_length=100, unique=True, allow_unicode=True, help_text="ข้อความที่ใช้ใน URL (ภาษาอังกฤษหรือไทยก็ได้ เว้นวรรคจะถูกแทนที่ด้วยขีด)")
+    description = models.TextField(blank=True, null=True, verbose_name="คำอธิบายหมวดหมู่ (ถ้ามี)")
+
+    class Meta:
+        verbose_name = "หมวดหมู่"
+        verbose_name_plural = "หมวดหมู่ทั้งหมด"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('outfits:outfit_list_by_category', args=[self.slug])
 
 class Outfit(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='outfits/', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00')) # Price per day
-    is_rented = models.BooleanField(default=False) # General availability flag (can be enhanced for multi-stock)
+    is_rented = models.BooleanField(default=False) # General availability flag
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='outfits',
+        verbose_name="หมวดหมู่"
+    )
 
     def __str__(self):
         return self.name
@@ -75,30 +100,21 @@ class Cart(models.Model):
         return f"คำสั่งซื้อ #{self.id} {user_info}{status_info}"
 
     def calculate_and_set_total_price(self):
-        """Calculates total price from items and updates self.total_price."""
         current_total = Decimal('0.00')
-        for item in self.cart_items_cart.all(): # Ensure this related_name is correct
+        for item in self.cart_items_cart.all():
             current_total += item.get_total_item_price()
-        
-        if self.total_price != current_total:
-            self.total_price = current_total
-            # self.save(update_fields=['total_price']) # Avoid saving here to prevent recursion if called during save
-                                                    # The calling function (e.g., view or CartItem.save) should handle saving the Cart.
+        self.total_price = current_total
         return self.total_price
 
     def get_total_price(self):
-        # Returns the current total_price field.
-        # For display, it's assumed this field is kept up-to-date.
         return self.total_price
 
     @property
     def item_count(self):
-        """Returns the total number of individual items (sum of quantities)."""
         count = self.cart_items_cart.aggregate(total_quantity=models.Sum('quantity'))['total_quantity']
         return count or 0
 
     def mark_as_paid(self, payment_slip_file):
-        """Marks the cart as paid and sets relevant fields. View should save."""
         self.is_paid = True
         self.payment_slip = payment_slip_file
         self.paid_at = timezone.now()
@@ -116,7 +132,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, related_name='cart_items')
-    quantity = models.PositiveIntegerField(default=1) # Should be 1 for rentals
+    quantity = models.PositiveIntegerField(default=1)
     cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
@@ -141,24 +157,20 @@ class CartItem(models.Model):
         return Decimal('0.00')
 
     def save(self, *args, **kwargs):
-        # Update the item's stored price based on current dates
         if self.start_date and self.end_date:
             self.item_price_at_rental = self.get_total_item_price()
         else:
             self.item_price_at_rental = Decimal('0.00')
-        
-        super().save(*args, **kwargs) # Save the CartItem itself first
-
-        # After saving the CartItem, update its Cart's total_price
+        super().save(*args, **kwargs)
         if self.cart:
-            new_cart_total = self.cart.calculate_and_set_total_price() # Calculate and set on cart instance
-            if self.cart.total_price != new_cart_total : # Check if recalculation changed it
+            new_cart_total = self.cart.calculate_and_set_total_price()
+            if self.cart.total_price != new_cart_total:
                  self.cart.total_price = new_cart_total
-            self.cart.save(update_fields=['total_price']) # Save only the total_price of the cart
+            self.cart.save(update_fields=['total_price'])
 
     def delete(self, *args, **kwargs):
         cart_to_update = self.cart
-        super().delete(*args, **kwargs) # Delete the CartItem
+        super().delete(*args, **kwargs)
         if cart_to_update:
             new_cart_total = cart_to_update.calculate_and_set_total_price()
             if cart_to_update.total_price != new_cart_total:

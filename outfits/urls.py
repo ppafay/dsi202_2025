@@ -8,6 +8,7 @@ app_name = 'outfits'
 urlpatterns = [
     path('', views.home, name='home'),
     path('outfits/', views.OutfitListView.as_view(), name='outfit-list'),
+    path('outfits/category/<slug:category_slug>/', views.OutfitListView.as_view(), name='outfit_list_by_category'),
     path('outfits/search/', views.OutfitSearchView.as_view(), name='outfit-search'),
     path('outfits/<int:pk>/', views.OutfitDetailView.as_view(), name='outfit-detail'),
     path('outfits/create/', views.create_outfit, name='create-outfit'),
@@ -21,6 +22,8 @@ urlpatterns = [
     path('payment/confirm/', views.confirm_payment_view, name='confirm_payment'),
     path('payment/success/', views.payment_success_view, name='payment_success'),
     path('orders/history/', views.order_history_view, name='order_history'),
+
+    path('categories/', views.category_list_view, name='category_list'),
 
     # Custom auth URLs should be commented out if using allauth
     # path('login/', views.user_login, name='login'),

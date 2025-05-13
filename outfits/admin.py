@@ -1,21 +1,37 @@
-# dsi202/outfits/admin.py
 
 from django.contrib import admin
-from .models import Outfit, Cart, CartItem
+from .models import Outfit, Cart, CartItem, Category # <<< ตรวจสอบว่า import Category
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils import timezone
 
+# 1. CategoryAdmin (ควรจะประกาศก่อน OutfitAdmin ถ้า Outfit อ้างอิงถึง Category)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'outfit_count_display') # เปลี่ยน outfit_count เป็น outfit_count_display
+    search_fields = ('name', 'description')
+    prepopulated_fields = {'slug': ('name',)}
+
+    def outfit_count_display(self, obj): # เปลี่ยนชื่อ method ให้ชัดเจน
+        return obj.outfits.count()
+    outfit_count_display.short_description = "จำนวนชุดในหมวดหมู่นี้"
+
+# 2. OutfitAdmin (เหลือเพียงอันเดียว และแก้ไข list_display/list_editable)
 @admin.register(Outfit)
 class OutfitAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price_per_day_display', 'is_rented', 'id')
-    list_filter = ('is_rented',)
-    search_fields = ('name', 'description')
-    list_editable = ('is_rented',)
-    fields = ('name', 'description', 'price', 'image', 'is_rented')
-    def price_per_day_display(self, obj): return f"฿{obj.price:,.2f} / วัน"
-    price_per_day_display.short_description = 'ราคาเช่าต่อวัน'
+    list_display = ('name', 'category', 'price_per_day_display', 'is_rented', 'id') # <<< ใช้ 'category' โดยตรง
+    list_filter = ('is_rented', 'category')
+    search_fields = ('name', 'description', 'category__name')
+    list_editable = ('is_rented', 'category') # <<< 'category' สามารถแก้ไขได้แล้ว
+    autocomplete_fields = ['category']
+    fields = ('name', 'category', 'description', 'price', 'image', 'is_rented')
 
+    def price_per_day_display(self, obj):
+        return f"฿{obj.price:,.2f} / วัน"
+    price_per_day_display.short_description = 'ราคาเช่าต่อวัน'
+    # ไม่จำเป็นต้องมี category_display method อีกต่อไปถ้าใช้ 'category' ใน list_display โดยตรง
+
+# 3. CartItemInline (เหมือนเดิมจากครั้งก่อน)
 class CartItemInline(admin.TabularInline):
     model = CartItem; extra = 0
     readonly_fields = ('outfit_link_inline', 'outfit_price_per_day', 'rental_days_display', 'calculated_item_price', 'item_price_at_rental')
@@ -29,9 +45,11 @@ class CartItemInline(admin.TabularInline):
     outfit_price_per_day.short_description = 'ราคา/วัน'
     def rental_days_display(self, obj): return obj.get_rental_days()
     rental_days_display.short_description = 'วันเช่า'
-    def calculated_item_price(self, obj): return f"฿{obj.get_total_item_price():,.2f}"
+    def calculated_item_price(self, obj): return f"฿{obj.get_total_item_price():,.2f}" # ราคาที่คำนวณสด
     calculated_item_price.short_description = 'ราคารวม (สด)'
+    # item_price_at_rental แสดงราคาที่ถูกบันทึกไว้ตอนเช่า
 
+# 4. CartAdmin (เหมือนเดิมจากครั้งก่อนที่แก้ไข IndentationError และ list_editable แล้ว)
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ('id','user_display','total_price_display','is_paid', 'rental_status','paid_at_display','created_at_display','item_count_display','return_tracking_number')
@@ -44,11 +62,11 @@ class CartAdmin(admin.ModelAdmin):
         ('Pricing & Timestamps', {'fields': ('total_price_display_field', 'created_at', 'updated_at')}),
     )
     inlines = [CartItemInline]; list_per_page = 20
-    list_editable = ('rental_status', 'is_paid')
+    list_editable = ('rental_status', 'is_paid') # ถูกต้องแล้วเพราะ 'rental_status' และ 'is_paid' อยู่ใน list_display
 
     actions = ['mark_as_payment_confirmed', 'mark_as_processing', 'mark_as_shipped', 'mark_as_delivered', 'mark_as_customer_returning','mark_as_returned_received', 'mark_as_completed', 'mark_as_cancelled']
-    
-    def _update_status(self, request, queryset, status_key, message_suffix): # Helper method
+
+    def _update_status(self, request, queryset, status_key, message_suffix):
         updated_count = queryset.update(rental_status=status_key)
         if status_key == 'payment_confirmed':
             queryset.update(is_paid=True, paid_at=timezone.now())
@@ -56,6 +74,7 @@ class CartAdmin(admin.ModelAdmin):
 
     def mark_as_payment_confirmed(self, r, qs): self._update_status(r, qs, 'payment_confirmed', "ยืนยันการชำระเงินแล้ว")
     mark_as_payment_confirmed.short_description = "สถานะ: ยืนยันการชำระเงิน"
+    # ... (actions อื่นๆ เหมือนเดิม) ...
     def mark_as_processing(self, r, qs): self._update_status(r, qs, 'processing', "กำลังเตรียมชุด")
     mark_as_processing.short_description = "สถานะ: กำลังเตรียมชุด"
     def mark_as_shipped(self, r, qs): self._update_status(r, qs, 'shipped', "จัดส่งแล้ว")
@@ -70,6 +89,7 @@ class CartAdmin(admin.ModelAdmin):
     mark_as_completed.short_description = "สถานะ: เสร็จสมบูรณ์"
     def mark_as_cancelled(self, r, qs): self._update_status(r, qs, 'cancelled', "ยกเลิกแล้ว")
     mark_as_cancelled.short_description = "สถานะ: ยกเลิกแล้ว"
+
 
     def user_display(self, o): return o.user.username if o.user else "Guest"; user_display.short_description='ผู้ใช้งาน'
     def total_price_display(self, o): o.calculate_and_set_total_price(); return f"฿{o.total_price:,.2f}"; total_price_display.short_description='ยอดรวม'; total_price_display.admin_order_field='total_price'
@@ -86,27 +106,27 @@ class CartAdmin(admin.ModelAdmin):
     def return_shipment_image_preview(self, o):
         if o.return_shipment_image: return format_html(f'<a href="{o.return_shipment_image.url}" target="_blank"><img src="{o.return_shipment_image.url}" width="100" height="100" style="object-fit:cover;border:1px solid #ddd;"/></a>')
         return "(No return image)"; return_shipment_image_preview.short_description='รูปหลักฐานส่งคืน'
-    
+
     def save_model(self, request, obj, form, change):
-        obj.calculate_and_set_total_price() # Ensure total price is calculated based on items
+        obj.calculate_and_set_total_price()
         super().save_model(request, obj, form, change)
 
     def save_formset(self, request, form, formset, change):
         super().save_formset(request, form, formset, change)
         if formset.instance and isinstance(formset.instance, Cart):
             current_total = formset.instance.calculate_and_set_total_price()
-            if formset.instance.total_price != current_total: # Check if it was actually changed by calculate_and_set_total_price
+            if formset.instance.total_price != current_total:
                  formset.instance.total_price = current_total
             formset.instance.save(update_fields=['total_price'])
 
-
+# 5. CartItemAdmin (เหมือนเดิมจากครั้งก่อนที่แก้ไข IndentationError และ list_editable แล้ว)
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('id','cart_link','outfit_link','quantity','start_date_display','end_date_display','rental_days_display','calculated_price_display', 'item_price_at_rental_display_col')
     list_filter = ('start_date', 'end_date', 'cart__is_paid'); search_fields = ('outfit__name', 'cart__id', 'cart__user__username')
     autocomplete_fields = ['outfit', 'cart']; list_editable = ('quantity',); list_per_page = 25; ordering = ('-cart__id', 'id')
     fields = ('cart','outfit','quantity','start_date','end_date','item_price_at_rental_display'); readonly_fields = ('item_price_at_rental_display',)
-    
+
     def cart_link(self, o):
         if o.cart: l=reverse("admin:outfits_cart_change",args=[o.cart.id]);ui=f" (User: {o.cart.user.username})" if o.cart.user else " (Guest)"; return format_html(f'<a href="{l}">Cart #{o.cart.id}{ui}</a>')
         return "N/A"; cart_link.short_description='ตะกร้า'; cart_link.admin_order_field='cart__id'
@@ -116,7 +136,7 @@ class CartItemAdmin(admin.ModelAdmin):
     def start_date_display(self, o): return o.start_date.strftime("%d %b %Y") if o.start_date else "-"; start_date_display.short_description='เริ่มเช่า'; start_date_display.admin_order_field='start_date'
     def end_date_display(self, o): return o.end_date.strftime("%d %b %Y") if o.end_date else "-"; end_date_display.short_description='วันคืน'; end_date_display.admin_order_field='end_date'
     def rental_days_display(self, o): return o.get_rental_days(); rental_days_display.short_description='วัน'
-    def calculated_price_display(self, o): return f"฿{o.get_total_item_price():,.2f}"; calculated_price_display.short_description='ราคารวม (สด)' # Based on current dates
+    def calculated_price_display(self, o): return f"฿{o.get_total_item_price():,.2f}"; calculated_price_display.short_description='ราคารวม (สด)'
     def item_price_at_rental_display_col(self,o): return f"฿{o.item_price_at_rental:,.2f}"; item_price_at_rental_display_col.short_description='ราคาที่บันทึก'; item_price_at_rental_display_col.admin_order_field='item_price_at_rental'
     def item_price_at_rental_display(self,o): return f"฿{o.item_price_at_rental:,.2f}"; item_price_at_rental_display.short_description='ราคาที่บันทึกไว้สำหรับรายการนี้'
 
@@ -133,10 +153,8 @@ class CartItemAdmin(admin.ModelAdmin):
         carts_to_update=set()
         for item in queryset:
             if item.cart: carts_to_update.add(item.cart)
-        
-        super().delete_queryset(request, queryset) # Delete items first
-        
-        for cart_obj in carts_to_update: # Then update affected carts
+        super().delete_queryset(request, queryset)
+        for cart_obj in carts_to_update:
             current_total = cart_obj.calculate_and_set_total_price()
             if cart_obj.total_price != current_total:
                 cart_obj.total_price = current_total

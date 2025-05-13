@@ -69,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',  # ✅ required by allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'outfits.context_processors.categories_processor',
                 # 'outfits.context_processors.cart_context',  # enable if you use it
             ],
         },

@@ -2,7 +2,7 @@
 {% load static %}
 {% load socialaccount %}
 
-{% block title %}Login - MindVibe{% endblock %}
+{% block title %}Sign Up - MindVibe{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -12,7 +12,7 @@
     align-items: center;
     padding: 80px 16px;
     background-color: var(--background-main);
-    min-height: 85vh;
+    min-height: 80vh;
   }
 
   .auth-card {
@@ -20,22 +20,22 @@
     padding: 48px 32px;
     border-radius: 32px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-    max-width: 440px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
 
   .auth-card h2 {
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: var(--primary-action-bg);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .auth-card p {
     font-size: 0.95rem;
     color: var(--text-secondary);
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
   .google-btn {
@@ -46,7 +46,7 @@
     background-color: white;
     border: 1px solid var(--border-color-soft);
     border-radius: 999px;
-    padding: 12px 20px;
+    padding: 10px 20px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -54,12 +54,10 @@
     text-decoration: none;
     color: var(--text-primary);
     transition: all 0.2s ease;
-    margin-bottom: 28px;
   }
 
   .google-btn:hover {
     background-color: #f9f9f9;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   }
 
   .google-btn img {
@@ -69,9 +67,18 @@
   }
 
   .divider {
-    margin: 24px 0;
-    position: relative;
+    margin: 28px 0;
     text-align: center;
+    position: relative;
+  }
+
+  .divider span {
+    background: white;
+    padding: 0 12px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    z-index: 1;
+    position: relative;
   }
 
   .divider::before {
@@ -85,32 +92,20 @@
     z-index: 0;
   }
 
-  .divider span {
-    position: relative;
-    z-index: 1;
-    background: white;
-    padding: 0 14px;
-    color: var(--text-light);
-    font-size: 0.9rem;
-  }
-
-  form {
+  form .form-group {
     text-align: left;
-  }
-
-  .form-group {
     margin-bottom: 16px;
   }
 
-  .form-group label {
-    font-size: 0.9rem;
+  form .form-group label {
     font-weight: 500;
-    margin-bottom: 4px;
-    color: var(--text-primary);
+    font-size: 0.9rem;
     display: block;
+    margin-bottom: 6px;
+    color: var(--text-primary);
   }
 
-  .form-group input {
+  form .form-group input {
     width: 100%;
     padding: 10px 14px;
     border: 1px solid var(--border-color-soft);
@@ -119,7 +114,7 @@
     background-color: var(--background-light);
   }
 
-  .form-group input:focus {
+  form .form-group input:focus {
     border-color: var(--primary-action-bg);
     outline: none;
     background-color: #fff;
@@ -134,9 +129,9 @@
     font-size: 1rem;
     font-weight: 500;
     width: 100%;
+    margin-top: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    margin-top: 10px;
   }
 
   .submit-btn:hover {
@@ -144,7 +139,7 @@
   }
 
   .bottom-text {
-    margin-top: 20px;
+    margin-top: 24px;
     font-size: 0.9rem;
     color: var(--text-secondary);
   }
@@ -164,52 +159,34 @@
 {% block content %}
 <div class="auth-container">
   <div class="auth-card">
-    <h2>Welcome Back 👋</h2>
-    <p>Log in to your MindVibe account</p>
+    <h2>Join MindVibe 🌸</h2>
+    <p>Create your account to explore sustainable fashion</p>
 
-    {% get_providers as social_providers %}
-    {% for provider in social_providers %}
-      {% if provider.id == "google" %}
-        <a href="{% provider_login_url provider.id %}" class="google-btn">
-          <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-          Continue with {{ provider.name }}
-        </a>
-      {% endif %}
-    {% endfor %}
+    <a href="{% provider_login_url 'google' %}" class="google-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
+      Sign up with Google
+    </a>
 
     <div class="divider"><span>or</span></div>
 
-    <form method="POST" action="{% url 'account_login' %}">
+    <form method="POST" action="{% url 'account_signup' %}">
       {% csrf_token %}
       {{ form.non_field_errors }}
 
+      {% for field in form %}
       <div class="form-group">
-        {{ form.login.label_tag }}
-        {{ form.login }}
-        {{ form.login.errors }}
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
       </div>
+      {% endfor %}
 
-      <div class="form-group">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-        {{ form.password.errors }}
-      </div>
-
-      <div class="form-group">
-        {{ form.remember.label_tag }}
-        {{ form.remember }}
-      </div>
-
-      <button type="submit" class="submit-btn">Login</button>
+      <button type="submit" class="submit-btn">Sign Up</button>
     </form>
 
     <div class="bottom-text">
-      Don't have an account?
-      <a href="{% url 'account_signup' %}">Sign up</a>
-    </div>
-
-    <div class="bottom-text">
-      <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
+      Already have an account?
+      <a href="{% url 'account_login' %}">Login here</a>
     </div>
   </div>
 </div>

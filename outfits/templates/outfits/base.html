@@ -4,163 +4,224 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'outfits/styles.css' %}">
-    {# <link rel="stylesheet" href="{% static 'outfits/responsive.css' %}">  #}
-    {% block extra_head %}{% endblock %}
-    <title>{% block title %}MindVibe 🌸{% endblock %}</title>
-    <style>
-        /* Basic Responsive Nav - Example, refine in your CSS file */
-        .nav-toggler {
-            display: none;
-            font-size: 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-medium); /* Adjust color as needed */
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-        .header-container nav .nav-links { /* Target the ul directly */
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-        .header-container nav .nav-links li {
-             margin-left: 30px; /* As per your original styles.css */
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'outfits/styles.css' %}" />
+  <title>{% block title %}MindVibe 🌸{% endblock %}</title>
 
-        @media (max-width: 768px) { /* Adjust breakpoint as needed */
-            .header-container nav .nav-links {
-                display: none; /* Hide by default on mobile */
-                flex-direction: column;
-                width: 100%;
-                position: absolute;
-                top: 100%; /* Position below the header */
-                left: 0;
-                background-color: var(--background-card, #fff); /* Match header or use a card background */
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                z-index: 999; /* Ensure it's above other content */
-            }
-            .header-container nav .nav-links.active {
-                display: flex; /* Show when active */
-            }
-            .header-container nav .nav-links li {
-                margin-left: 0;
-                width: 100%;
-            }
-            .header-container nav .nav-links li a,
-            .header-container nav .nav-links li form button.nav-link-button {
-                display: block;
-                padding: 1rem;
-                text-align: left; /* Or center if preferred */
-                width: 100%;
-                border-bottom: 1px solid var(--border-soft, #eee);
-            }
-            .header-container nav .nav-links li:last-child a,
-            .header-container nav .nav-links li:last-child form button.nav-link-button {
-                border-bottom: none;
-            }
-            .nav-toggler {
-                display: block; /* Show toggler on mobile */
-            }
-        }
-    </style>
+  <style>
+    :root {
+      --pink-main: #cb9ca6; /* dusty rose */
+      --pink-light: #fceff2;
+      --green-light: #e4f3ea; /* sage light */
+      --green-soft: #c7e3d4; /* sage soft */
+      --green-deep: #6f9e8c; /* sage green deep */
+
+      --primary-action-bg: var(--pink-main);
+      --primary-action-hover: #b98490;
+      --background-main: var(--pink-light);
+      --background-card: #ffffff;
+      --border-color-soft: #e4dada;
+      --text-primary: #2e2e2e;
+      --text-secondary: #6d7f6e;
+      --link-color: var(--green-deep);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', 'Kanit', sans-serif;
+      background-color: var(--background-main);
+      color: var(--text-primary);
+    }
+
+    .page-wrapper {
+      background: var(--background-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      background: linear-gradient(to right, var(--green-light), var(--pink-main));
+      padding: 1.2rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      position: relative;
+      z-index: 10;
+    }
+
+    h1 a {
+      text-decoration: none;
+      color: var(--green-deep);
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    nav a,
+    .nav-link-button {
+      text-decoration: none;
+      color: #2a2a2a; /* ชัดขึ้น */
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav a.active {
+      color: var(--primary-action-bg);
+      font-weight: 600;
+    }
+
+    .nav-toggler {
+      display: none;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-medium);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: var(--background-card);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-toggler {
+        display: block;
+      }
+    }
+
+    footer {
+      background: linear-gradient(to right, var(--pink-main), var(--green-light));
+      color: #2f4237;
+      text-align: center;
+      padding: 1.5rem 1rem 0;
+      position: relative;
+    }
+
+    .footer-nav {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-nav a {
+      color: #3e5c48;
+      margin: 0 0.5rem;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <div class="page-wrapper">
-        <header>
-            <div class="container header-container">
-                <h1><a href="{% url 'outfits:home' %}">MindVibe 🌸</a></h1>
-                <nav>
-                    <button class="nav-toggler" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">
-                        <span>☰</span> {# Hamburger Icon #}
-                    </button>
-                    <ul class="nav-links" id="navLinks">
-                        <li>
-                            <a href="{% url 'outfits:home' %}"
-                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'home' %}active{% endif %}">หน้าแรก</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'outfits:outfit-list' %}"
-                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name in 'outfit-list outfit-detail outfit-search' %}active{% endif %}">ชุดทั้งหมด</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'outfits:cart' %}"
-                               class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'cart' %}active{% endif %}">ตะกร้าสินค้า</a>
-                        </li>
+  <div class="page-wrapper">
+    <!-- 🌊 Wave Top -->
+    <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+      <path fill="#ffffff" d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,58.7C840,64,960,96,1080,90.7C1200,85,1320,43,1380,21.3L1440,0L0,0Z"></path>
+    </svg>
 
-                        {% if user.is_authenticated %}
-                            <li>
-                                <a href="{% url 'outfits:order_history' %}"
-                                   class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'order_history' %}active{% endif %}">
-                                    ประวัติการสั่งซื้อ
-                                </a>
-                            </li>
-                            <li>
-                                <form method="post" action="{% url 'account_logout' %}" style="display: inline; margin: 0; padding: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="nav-link-button">
-                                        ออกจากระบบ ({{ user.username|default:user.email }})
-                                    </button>
-                                </form>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a href="{% url 'account_login' %}"
-                                   class="{% if request.resolver_match.url_name == 'account_login' %}active{% endif %}">เข้าสู่ระบบ</a>
-                            </li>
-                            {# "สมัครสมาชิก" link removed as per request #}
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </header>
-
-        <main>
-            {% if messages %}
-                <div class="container messages-container" style="padding-top: 1rem; padding-bottom: 1rem;">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
+    <header>
+      <div class="container header-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1><a href="{% url 'outfits:home' %}">MindVibe 🌸</a></h1>
+        <nav>
+          <button class="nav-toggler" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">☰</button>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="{% url 'outfits:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">🏠 หน้าแรก</a></li>
+            <li><a href="{% url 'outfits:outfit-list' %}" class="{% if request.resolver_match.url_name in 'outfit-list outfit-detail outfit-search' %}active{% endif %}">👗 ชุดทั้งหมด</a></li>
+            <li><a href="{% url 'outfits:cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">🛍️ ตะกร้าสินค้า</a></li>
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'outfits:order_history' %}" class="{% if request.resolver_match.url_name == 'order_history' %}active{% endif %}">📦 ประวัติ</a></li>
+              <li>
+                <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="nav-link-button">🚪 ออก ({{ user.username|default:user.email }})</button>
+                </form>
+              </li>
+            {% else %}
+              <li><a href="{% url 'account_login' %}" class="{% if request.resolver_match.url_name == 'account_login' %}active{% endif %}">🔐 เข้าสู่ระบบ</a></li>
             {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-            {% block content %}
-            {% endblock %}
-        </main>
+    <main>
+      {% if messages %}
+        <div class="container messages-container" style="padding: 1rem 0;">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
 
-        <footer>
-            <div class="container">
-                <div class="footer-nav">
-                    <a href="#">เกี่ยวกับเรา</a>
-                    <a href="#">คำถามที่พบบ่อย</a>
-                    <a href="#">ติดต่อเรา</a>
-                </div>
-                <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved. Sustainable Fashion For You.</p>
-            </div>
-        </footer>
-    </div> {% block extra_scripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navToggler = document.querySelector('.nav-toggler');
-            const navLinks = document.querySelector('.nav-links'); // Target ul by its class
+    <footer>
+      <!-- 🌊 Wave Bottom -->
+      <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+        <path fill="#ffffff" d="M0,96L60,90.7C120,85,240,75,360,74.7C480,75,600,85,720,80C840,75,960,53,1080,58.7C1200,64,1320,96,1380,112L1440,128L1440,0L0,0Z"></path>
+      </svg>
+      <div class="container">
+        <div class="footer-nav">
+          <a href="#">เกี่ยวกับเรา</a>
+          <a href="#">คำถามที่พบบ่อย</a>
+          <a href="#">ติดต่อเรา</a>
+        </div>
+        <p class="footer-tagline">🦋 MindVibe - เช่าชุดที่ใช่ ใส่ใจโลก</p>
+        <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved.</p>
+      </div>
+    </footer>
+  </div>
 
-            if (navToggler && navLinks) {
-                navToggler.addEventListener('click', () => {
-                    const isExpanded = navLinks.classList.toggle('active');
-                    navToggler.setAttribute('aria-expanded', isExpanded);
-                });
-            }
+  {% block extra_scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const navToggler = document.querySelector('.nav-toggler');
+      const navLinks = document.querySelector('.nav-links');
+      if (navToggler && navLinks) {
+        navToggler.addEventListener('click', () => {
+          const isExpanded = navLinks.classList.toggle('active');
+          navToggler.setAttribute('aria-expanded', isExpanded);
         });
-    </script>
-    {% endblock %}
+      }
+    });
+  </script>
+  {% endblock %}
 </body>
 </html>
