@@ -3,13 +3,40 @@
 
 {% block title %}การชำระเงินสำเร็จ - MindVibe{% endblock %}
 
+{% block extra_head %}
+<style>
+    .payment-success-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        text-align: center;
+        background-color: #e9f7ef; /* Light green background */
+        border: 1px solid #a7d7c5; /* Nature green border */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    }
+    .payment-success-container h2 {
+        color: #28a745; /* Success green */
+        margin-bottom: 15px;
+    }
+    .payment-success-container .lead {
+        font-size: 1.1rem;
+        color: #3D4F53; /* Text dark */
+        margin-bottom: 25px;
+    }
+    .payment-success-container .btn {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container text-center py-5">
-    <div class="payment-success" style="max-width: 600px; margin: auto; background-color: #f8f9fa; padding: 30px; border-radius: 10px;">
-        <h2 class="mb-3">✅ การชำระเงินเสร็จสมบูรณ์!</h2>
-        <p class="lead">ขอบคุณที่ใช้บริการ MindVibe คำสั่งซื้อของคุณกำลังดำเนินการ</p>
+<div class="container">
+    <div class="payment-success-container">
+        <h2>✅ การชำระเงินเสร็จสมบูรณ์!</h2>
+        <p class="lead">ขอบคุณที่ใช้บริการ MindVibe คำสั่งซื้อของคุณได้รับการยืนยันและกำลังดำเนินการ</p>
         <hr class="my-4">
-        <p>คุณสามารถตรวจสอบสถานะคำสั่งซื้อได้ที่หน้าประวัติการสั่งซื้อ</p>
+        <p>คุณสามารถตรวจสอบสถานะคำสั่งซื้อและรายละเอียดการเช่าได้ที่หน้าประวัติการสั่งซื้อ</p>
         <a href="{% url 'outfits:order_history' %}" class="btn btn-info me-2">ดูประวัติการสั่งซื้อ</a>
         <a href="{% url 'outfits:home' %}" class="btn btn-primary">กลับสู่หน้าแรก</a>
     </div>

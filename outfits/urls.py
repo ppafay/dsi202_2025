@@ -22,7 +22,6 @@ urlpatterns = [
     path('payment/success/', views.payment_success_view, name='payment_success'),
     path('orders/history/', views.order_history_view, name='order_history'),
 
-    # Custom auth URLs should be commented out if using allauth
     # path('login/', views.user_login, name='login'),
     # path('logout/', views.user_logout, name='logout'),
     # path('register/', views.register, name='register'),

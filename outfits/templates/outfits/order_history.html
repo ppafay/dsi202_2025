@@ -6,33 +6,38 @@
 {% block extra_head %}
 <style>
     .order-card { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 25px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom:10px; border-bottom: 1px solid #eee;}
     .order-header h5 { color: var(--pastel-pink-dark); margin-bottom: 0; }
     .order-meta p { margin-bottom: 5px; font-size: 0.9em; }
     .order-meta strong { color: var(--text-dark); }
     .item-list { margin-top: 15px; }
     .item-detail { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px dashed #f0f0f0; }
     .item-detail:last-child { border-bottom: none; }
-    .item-detail img { width: 70px; height: 90px; object-fit: cover; border-radius: 4px; margin-right: 15px; }
+    .item-detail img { width: 60px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 15px; }
     .item-info p { margin-bottom: 2px; font-size: 0.85em;}
     .item-info h6 { font-size: 1em; margin-bottom: 4px;}
-    .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8em; color: #fff; display: inline-block; }
-    .status-pending_payment { background-color: #6c757d; } /* Grey */
-    .status-processing { background-color: #ffc107; color: #212529 !important; } /* Yellow */
-    .status-shipped { background-color: #17a2b8; } /* Info Blue */
-    .status-delivered { background-color: #28a745; } /* Green */
-    .status-returned { background-color: #007bff; } /* Blue */
-    .status-completed { background-color: #20c997; } /* Teal */
-    .status-cancelled { background-color: #dc3545; } /* Red */
-    .upload-section { margin-top: 15px; padding-top:15px; border-top: 1px solid #eee;}
-    .upload-section .form-control {font-size: 0.9em; margin-top: 5px;}
+    .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.85em; color: #fff; display: inline-block; font-weight:500; min-width: 140px; text-align: center;} /* Adjusted min-width */
+    .status-pending_payment { background-color: #6c757d; }
+    .status-payment_confirmed { background-color: #17a2b8; }
+    .status-processing { background-color: #ffc107; color: #212529 !important; }
+    .status-shipped { background-color: #007bff; }
+    .status-delivered { background-color: #28a745; }
+    .status-customer_returning { background-color: #fd7e14; }
+    .status-returned_received { background-color: #6f42c1; }
+    .status-completed { background-color: #20c997; }
+    .status-issue_reported { background-color: #dc3545; }
+    .status-cancelled { background-color: #343a40; }
+    .upload-section, .return-shipment-section { margin-top: 15px; padding-top:15px; border-top: 1px solid #eee;}
+    .return-shipment-section { background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-top: 1px solid #007bff30;}
+    .return-shipment-section h6 { color: #0056b3; }
+    .upload-section .form-control, .return-shipment-section .form-control-sm {font-size: 0.9em; margin-top: 5px; margin-bottom: 10px;}
     .errorlist { color: red; font-size: 0.8em; list-style-type: none; padding-left: 0;}
-
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container" style="padding-top: 40px;">
-    <h2 class="page-title" style="margin-bottom: 30px;">🧾 ประวัติการสั่งซื้อที่ชำระแล้ว</h2>
+    <h2 class="page-title" style="margin-bottom: 30px;">🧾 ประวัติการสั่งซื้อ</h2>
 
     {% if messages %}
         {% for message in messages %}
@@ -44,22 +49,17 @@
     {% endif %}
 
     {% for data in orders_with_forms %}
-    {% with order=data.order upload_form=data.upload_form items_details=data.items_details latest_return_date=data.latest_return_date %}
+    {% with order=data.order upload_form=data.upload_form return_form=data.return_form show_return_form=data.show_return_form items_details=data.items_details latest_return_date=data.latest_return_date %}
         <div class="order-card">
-            <div class="order-header d-flex justify-content-between align-items-center">
+            <div class="order-header">
                 <h5>คำสั่งซื้อ #{{ order.id }}</h5>
-                {% if order.rental_status %}
-                <span class="status-badge status-{{ order.rental_status }}">
-                    {{ order.get_rental_status_display }}
+                <span class="status-badge status-{{ order.rental_status|default:'pending_payment' }}">
+                    {{ order.get_rental_status_display|default:"รอการชำระเงิน" }}
                 </span>
-                {% else %}
-                <span class="status-badge status-pending_payment">รอการชำระเงิน</span>
-                {% endif %}
             </div>
-            <hr>
             <div class="order-meta row">
                 <div class="col-md-6">
-                    <p><strong>วันที่ชำระเงิน:</strong> {{ order.paid_at|date:"d M Y, H:i"|default:"-" }}</p>
+                    <p><strong>วันที่สั่งซื้อ (ชำระเงิน):</strong> {{ order.paid_at|date:"d M Y, H:i"|default:"-" }}</p>
                     <p><strong>ยอดรวม:</strong> ฿{{ order.total_price|floatformat:2 }}</p>
                     {% if latest_return_date %}
                          <p><strong>กำหนดคืน (รวมทุกรายการ):</strong> <span class="text-danger fw-bold">{{ latest_return_date|date:"d M Y" }}</span></p>
@@ -81,10 +81,10 @@
                     {% if item.image_url %}
                         <img src="{{ item.image_url }}" alt="{{ item.name }}">
                     {% else %}
-                        <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image for {{ item.name }}">
+                        <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image">
                     {% endif %}
                     <div class="item-info">
-                        <h6>{{ item.name }} ({{ item.quantity }})</h6>
+                        <h6>{{ item.name }} (จำนวน: {{ item.quantity }})</h6>
                         {% if item.start_date and item.end_date %}
                         <p>เช่า: {{ item.start_date|date:"d M Y" }} - {{ item.end_date|date:"d M Y" }} ({{ item.days }} วัน)</p>
                         <p>ราคา: ฿{{ item.price|floatformat:2 }}</p>
@@ -99,20 +99,55 @@
             </div>
 
             {% if order.is_paid %}
-            <div class="upload-section">
-                <h6>แจ้งปัญหา / แนบรูปภาพเพิ่มเติมสำหรับคำสั่งซื้อนี้:</h6>
-                {% if order.customer_uploaded_image %}
-                    <p>รูปภาพที่แนบแล้ว: <a href="{{ order.customer_uploaded_image.url }}" target="_blank">ดูรูปภาพ</a></p>
+                <div class="upload-section">
+                    <h6>ลูกค้าแจ้งปัญหา / แนบรูปภาพประกอบ (ถ้ามี):</h6>
+                    {% if order.customer_uploaded_image %}
+                        <p>รูปภาพที่แนบแล้ว: <a href="{{ order.customer_uploaded_image.url }}" target="_blank">ดูรูปภาพ</a></p>
+                    {% else %}
+                        <p class="text-muted small"><em>ยังไม่มีการแนบรูปภาพจากลูกค้าสำหรับปัญหานี้</em></p>
+                    {% endif %}
+                    {% if order.rental_status != 'completed' and order.rental_status != 'cancelled' %}
+                    <form method="post" enctype="multipart/form-data" action="{% url 'outfits:order_history' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <div class="mb-2">
+                            {{ upload_form.customer_uploaded_image.label_tag }}
+                            {{ upload_form.customer_uploaded_image }}
+                            {{ upload_form.customer_uploaded_image.errors }}
+                        </div>
+                        <button type="submit" name="upload_customer_image" class="btn btn-sm btn-outline-secondary">อัปโหลดรูปแจ้งปัญหา</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                {% if show_return_form and order.rental_status not in "customer_returning,returned_received,completed,cancelled" %}
+                <div class="return-shipment-section">
+                    <h6>แจ้งการส่งคืนสินค้าสำหรับคำสั่งซื้อ #{{ order.id }} (กำหนดคืน: {{ latest_return_date|date:"d M Y" }})</h6>
+                    <form method="post" enctype="multipart/form-data" action="{% url 'outfits:order_history' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <div class="mb-2">
+                            {{ return_form.return_tracking_number.label_tag }}
+                            {{ return_form.return_tracking_number }}
+                            {{ return_form.return_tracking_number.errors }}
+                        </div>
+                        <div class="mb-2">
+                            {{ return_form.return_shipment_image.label_tag }}
+                            {{ return_form.return_shipment_image }}
+                            {{ return_form.return_shipment_image.errors }}
+                        </div>
+                        <button type="submit" name="submit_return_shipment" class="btn btn-sm btn-primary">ยืนยันข้อมูลการส่งคืน</button>
+                    </form>
+                </div>
+                {% elif order.return_tracking_number %} {# Show if already submitted return info #}
+                 <div class="return-shipment-section">
+                    <h6>ข้อมูลการส่งคืนของคุณ:</h6>
+                    <p class="small mb-1">เลขพัสดุ: <strong>{{ order.return_tracking_number }}</strong></p>
+                     {% if order.return_shipment_image %}
+                        <p class="small">หลักฐานการส่ง: <a href="{{ order.return_shipment_image.url }}" target="_blank">ดูรูปภาพ</a></p>
+                     {% endif %}
+                 </div>
                 {% endif %}
-                <form method="post" enctype="multipart/form-data" action="{% url 'outfits:order_history' %}"> {# Action points to the same view #}
-                    {% csrf_token %}
-                    <input type="hidden" name="order_id" value="{{ order.id }}">
-                    {{ upload_form.customer_uploaded_image.label_tag }}
-                    {{ upload_form.customer_uploaded_image }}
-                    {{ upload_form.customer_uploaded_image.errors }}
-                    <button type="submit" name="upload_customer_image" class="btn btn-sm btn-outline-secondary mt-2">อัปโหลดรูปภาพ</button>
-                </form>
-            </div>
             {% endif %}
         </div>
     {% endwith %}

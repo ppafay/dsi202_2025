@@ -1,15 +1,43 @@
 {% extends "outfits/base.html" %}
+{% load static %}
+
+{% block title %}ผลการค้นหา - MindVibe{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'outfits/list.css' %}"> {# Assuming search results use list styling #}
+{% endblock %}
 
 {% block content %}
-<h2>ผลการค้นหา "{{ query }}"</h2>
-{% for result in results %}
-<div class="outfit-card">
-  <img src="{{ result.image.url }}" width="250">
-  <h3>{{ result.name }}</h3>
-  <p>{{ result.description }}</p>
-  <a href="{% url 'outfits:outfit-detail' result.pk %}">ดูรายละเอียด</a>
+<div class="container">
+    <h2 class="page-title">ผลการค้นหาสำหรับ "{{ query|default:"" }}"</h2>
+
+    {% if results %}
+    <div class="outfit-grid">
+        {% for result in results %}
+        <div class="outfit-card">
+            <a href="{% url 'outfits:outfit-detail' result.id %}" class="image-link">
+                {% if result.image and result.image.url %}
+                    <img src="{{ result.image.url }}" alt="{{ result.name }}">
+                {% else %}
+                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available for {{ result.name }}">
+                {% endif %}
+            </a>
+            <div class="card-content">
+                <h3><a href="{% url 'outfits:outfit-detail' result.id %}">{{ result.name }}</a></h3>
+                <p class="price-tag">฿{{ result.price|floatformat:2 }} / วัน</p>
+                <form method="post" action="{% url 'outfits:add_to_cart' result.id %}" class="add_to_cart_form">
+                    {% csrf_token %}
+                    {% comment %} Quantity input removed as it's 1 for rentals {% endcomment %}
+                    <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-outfits-found">
+        ไม่พบชุดที่ตรงกับคำค้นหา "{{ query }}" ลองค้นหาด้วยคำอื่นดูนะคะ
+    </p>
+    {% endif %}
 </div>
-{% empty %}
-<p>ไม่พบข้อมูล</p>
-{% endfor %}
 {% endblock %}

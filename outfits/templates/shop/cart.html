@@ -1,6 +1,5 @@
 {% extends "outfits/base.html" %}
 {% load static %}
-{% comment %} {% load crispy_forms_tags %} หากคุณใช้ crispy forms {% endcomment %}
 
 {% block title %}ตะกร้าสินค้า - MindVibe 🌸{% endblock %}
 
@@ -43,7 +42,7 @@
                         <div class="cart-item">
                             <div class="item-image">
                                 <a href="{% url 'outfits:outfit-detail' item.outfit.id %}">
-                                {% if item.outfit.image %}
+                                {% if item.outfit.image and item.outfit.image.url %}
                                     <img src="{{ item.outfit.image.url }}" alt="{{ item.outfit.name }}">
                                 {% else %}
                                     <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available">
@@ -62,7 +61,7 @@
                                         <p><strong>รวม:</strong> {{ item.get_rental_days }} วัน</p>
                                         <p><strong>ราคาเช่ารายการนี้:</strong> ฿{{ item.get_total_item_price|floatformat:2 }}</p>
                                         {% if not cart.is_paid %}
-                                        <small><a href="#" onclick="document.getElementById('date_form_{{ item.id }}').style.display='block'; this.style.display='none'; return false;">แก้ไขวันเช่า</a></small>
+                                        <small><a href="#" onclick="event.preventDefault(); document.getElementById('date_form_{{ item.id }}').style.display='block'; this.style.display='none';">แก้ไขวันเช่า</a></small>
                                         {% endif %}
                                     </div>
                                 {% endif %}
@@ -105,7 +104,7 @@
                         </dl>
 
                         {% if cart.cart_items_cart.exists and not cart.is_paid %}
-                            {% if all_dates_selected_for_cart %}  {% comment %} <<< ใช้ตัวแปรจาก view ที่นี่ {% endcomment %}
+                            {% if all_dates_selected_for_cart %}
                                 <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
                             {% else %}
                                 <p class="text-danger small">กรุณาเลือกวันเช่าสำหรับทุกรายการให้ครบถ้วน</p>

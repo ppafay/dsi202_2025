@@ -15,7 +15,7 @@
 
     <div class="product-detail-layout">
         <div class="product-image-column">
-            {% if outfit.image %}
+            {% if outfit.image and outfit.image.url %}
                 <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}" class="product-main-image">
             {% else %}
                 <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available" class="product-main-image">
@@ -24,26 +24,19 @@
 
         <div class="product-info-column">
             <h2 class="product-title">{{ outfit.name }}</h2>
-            <p class.product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+            <p class="product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
 
             <div class="product-description">
                 <h4>รายละเอียดชุด:</h4>
                 <p>{{ outfit.description|linebreaksbr|default:"ยังไม่มีคำอธิบายสำหรับชุดนี้" }}</p>
             </div>
 
-            {% comment %}
-            The RentForm for selecting dates is removed from here.
-            Users will select dates in the cart.
-            The quantity input is also removed as rentals are typically quantity 1.
-            {% endcomment %}
             <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="rent-form">
                 {% csrf_token %}
-                {% comment %} Input for quantity is removed, will be 1 by default {% endcomment %}
                 <button type="submit" class="btn btn-primary btn-lg add-to-cart-button">เพิ่มลงตะกร้า</button>
             </form>
-
-            {% if outfit.is_rented %}
-                <p class="rented-notice"><small>ชุดนี้อาจมีผู้เช่าอยู่ (ตรวจสอบวันว่างในตะกร้า)</small></p>
+             {% if outfit.is_rented %}
+                <p class="rented-notice mt-3"><small>หมายเหตุ: ชุดนี้อาจมีผู้เช่าอยู่ กรุณาตรวจสอบวันว่างในตะกร้าสินค้า</small></p>
             {% endif %}
         </div>
     </div>

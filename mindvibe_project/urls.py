@@ -8,12 +8,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', include(('outfits.urls', 'outfits'), namespace='outfits')),
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')), # For django-allauth
+    path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # For development, Django automatically serves static files from STATICFILES_DIRS
-    # and from app's 'static' subdirectories if 'django.contrib.staticfiles' is in INSTALLED_APPS.
-    # So, the following line might not be strictly necessary but doesn't harm:
-    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) # STATIC_ROOT is for collectstatic in prod
+    # No need to add static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) for development server
+    # if 'django.contrib.staticfiles' is in INSTALLED_APPS and STATICFILES_DIRS is configured.

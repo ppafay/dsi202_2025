@@ -35,7 +35,7 @@
 
                         {% if user.is_authenticated %}
                             <li>
-                                <a href="{% url 'outfits:order_history' %}"  {% comment %} <<< ตรวจสอบว่าคุณแก้ไขบรรทัดนี้เป็นแบบนี้แล้วจริงๆ {% endcomment %}
+                                <a href="{% url 'outfits:order_history' %}"
                                    class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'order_history' %}active{% endif %}">
                                     ประวัติการสั่งซื้อ
                                 </a>
