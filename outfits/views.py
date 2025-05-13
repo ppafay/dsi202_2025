@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.utils import timezone
 from decimal import Decimal
+from django.db.models import Q # For complex queries if needed
 
 from .models import Outfit, CartItem, Cart
 from .forms import (
@@ -68,13 +69,13 @@ def get_or_create_cart(request):
     cart = None
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
-        if created and cart_id: # User logged in, had a guest cart session
+        if created and cart_id:
             try:
                 guest_cart = Cart.objects.get(id=cart_id, user__isnull=True, is_paid=False)
-                if guest_cart.cart_items_cart.exists() and not cart.cart_items_cart.exists():
-                    for item in guest_cart.cart_items_cart.all(): # Reassign items
+                if guest_cart.cart_items_cart.exists() and not cart.cart_items_cart.exists(): # Merge if user's new cart is empty
+                    for item in guest_cart.cart_items_cart.all():
                         item.cart = cart; item.save()
-                    guest_cart.delete() # Delete old guest cart
+                    guest_cart.delete()
                 elif not guest_cart.cart_items_cart.exists(): guest_cart.delete()
             except Cart.DoesNotExist: pass
         request.session['cart_id'] = cart.id
@@ -90,20 +91,21 @@ def cart_view(request):
     cart = get_or_create_cart(request)
     cart_items_queryset = cart.cart_items_cart.all().order_by('id')
     forms_with_items = []
-    all_dates_selected_for_cart = True if cart_items_queryset.exists() else False # False if cart is empty
+    all_dates_selected_for_cart = True if cart_items_queryset.exists() else False
 
     for item in cart_items_queryset:
         date_form = CartItemDateSelectionForm(instance=item, prefix=f"item_{item.id}")
         forms_with_items.append({'item': item, 'date_form': date_form})
         if item.is_date_selection_pending: all_dates_selected_for_cart = False
 
-    # Ensure cart total is accurate before rendering.
-    # The CartItem.save() and delete() methods should handle updating the cart's total_price.
-    # An explicit call here is a fallback.
-    new_total_price = cart.calculate_total_price()
-    if cart.total_price != new_total_price:
-        cart.total_price = new_total_price
-        cart.save(update_fields=['total_price'])
+    current_total_price = cart.calculate_and_set_total_price() # This sets cart.total_price
+    # The CartItem.save() method now updates the cart.total_price and saves the cart.
+    # So, an explicit save here for the cart might be redundant if items were just saved.
+    # However, if cart items could be manipulated without triggering their save, this is a safeguard.
+    if cart.total_price != current_total_price:
+         cart.total_price = current_total_price
+         cart.save(update_fields=['total_price'])
+
 
     return render(request, 'shop/cart.html', {
         'cart': cart,
@@ -115,33 +117,30 @@ def cart_view(request):
 def add_to_cart(request, outfit_id):
     outfit_obj = get_object_or_404(Outfit, id=outfit_id)
     cart = get_or_create_cart(request)
-    # For rentals, ensure quantity is 1.
     cart_item, created = CartItem.objects.get_or_create(cart=cart, outfit=outfit_obj, defaults={'quantity': 1})
-    if not created: # If item already existed
+    if not created:
         if cart_item.quantity != 1: cart_item.quantity = 1
-        # Reset dates if re-adding, prompting user to select dates again for this specific item
         cart_item.start_date = None; cart_item.end_date = None; cart_item.item_price_at_rental = Decimal('0.00')
-        cart_item.save() # Triggers cart total update
+        cart_item.save() # This will trigger cart total update via CartItem.save()
         messages.info(request, f"'{outfit_obj.name}' อยู่ในตะกร้าแล้ว จำนวนถูกตั้งเป็น 1 และกรุณาเลือกวันเช่าใหม่")
-    else:
-        messages.success(request, f"'{outfit_obj.name}' ถูกเพิ่มลงในตะกร้า กรุณาเลือกวันเช่า")
+    else: messages.success(request, f"'{outfit_obj.name}' ถูกเพิ่มลงในตะกร้า กรุณาเลือกวันเช่า")
     return redirect('outfits:cart')
 
 # ---------------- อัปเดตวันเช่าในตะกร้า
 def update_cart_item_dates(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     cart = get_or_create_cart(request)
-    if cart_item.cart != cart:
-        messages.error(request, "ไม่สามารถอัปเดตรายการนี้ได้"); return redirect('outfits:cart')
+    if cart_item.cart != cart: messages.error(request, "ไม่สามารถอัปเดตรายการนี้ได้"); return redirect('outfits:cart')
 
     if request.method == 'POST':
         form = CartItemDateSelectionForm(request.POST, instance=cart_item, prefix=f"item_{item_id}")
         if form.is_valid():
-            form.save() # This calls CartItem.save(), which updates item_price and cart total
+            form.save() # CartItem.save() will update its price and the cart's total_price
             messages.success(request, f"อัปเดตวันเช่าสำหรับ '{cart_item.outfit.name}' เรียบร้อยแล้ว")
         else:
-            error_list = [f"{(form.fields.get(f).label if form.fields.get(f) else f.replace('_', ' ').title())}: {', '.join(e)}" for f, e in form.errors.items()]
-            messages.error(request, f"เกิดข้อผิดพลาดในการอัปเดตวันเช่า '{cart_item.outfit.name}': {'; '.join(error_list)}")
+            for field, errors in form.errors.items(): # Display all errors
+                for error in errors:
+                    messages.error(request, f"{form.fields[field].label if field != '__all__' and field in form.fields else ''} {error}")
     return redirect('outfits:cart')
 
 # ---------------- ลบจากตะกร้า
@@ -150,10 +149,9 @@ def remove_from_cart(request, item_id):
     try:
         cart_item = CartItem.objects.get(id=item_id, cart=cart)
         outfit_name = cart_item.outfit.name
-        cart_item.delete() # This now calls the overridden delete method in CartItem which updates cart total
+        cart_item.delete() # Overridden delete in CartItem model handles cart total update
         messages.success(request, f"'{outfit_name}' ถูกลบออกจากตะกร้าแล้ว")
-    except CartItem.DoesNotExist:
-        messages.error(request, "ไม่พบรายการที่ต้องการลบในตะกร้า")
+    except CartItem.DoesNotExist: messages.error(request, "ไม่พบรายการที่ต้องการลบในตะกร้า")
     return redirect('outfits:cart')
 
 # ---------------- PromptPay QR Functions
@@ -179,14 +177,28 @@ def generate_qr_base64(phone, amount):
 def payment_qr_view(request):
     cart = get_or_create_cart(request)
     if not cart.cart_items_cart.exists(): messages.warning(request, "ตะกร้าของคุณว่างเปล่า"); return redirect('outfits:cart')
-    for item in cart.cart_items_cart.all():
-        if item.is_date_selection_pending: messages.error(request, f"กรุณาเลือกวันเช่าสำหรับ '{item.outfit.name}' ก่อนชำระเงิน"); return redirect('outfits:cart')
     
-    # Ensure total_price is accurate before payment
-    current_total = cart.calculate_total_price()
-    if cart.total_price != current_total:
-        cart.total_price = current_total
-        cart.save(update_fields=['total_price'])
+    # Final availability check and date validation
+    for item in cart.cart_items_cart.all():
+        if item.is_date_selection_pending:
+            messages.error(request, f"กรุณาเลือกวันเช่าสำหรับ '{item.outfit.name}' ก่อนชำระเงิน")
+            return redirect('outfits:cart')
+        
+        # Re-validate availability, excluding current cart items for this check if it were more complex (e.g. stock)
+        # For single item stock, this checks against *other* paid orders
+        overlapping_rentals = CartItem.objects.filter(
+            outfit=item.outfit,
+            cart__is_paid=True, # Check against confirmed orders
+            start_date__lte=item.end_date,
+            end_date__gte=item.start_date
+        ).exclude(cart=cart) # Exclude the current cart itself from this check, as it's not yet paid
+
+        if overlapping_rentals.exists():
+            messages.error(request, f"ขออภัย ชุด '{item.outfit.name}' ไม่ว่างในช่วงวันที่ ({item.start_date.strftime('%d/%m')} - {item.end_date.strftime('%d/%m')}) ที่คุณเลือกแล้ว กรุณาเลือกวันอื่น")
+            return redirect('outfits:cart')
+
+    current_total = cart.calculate_and_set_total_price() # Ensure total_price on cart object is set
+    cart.save(update_fields=['total_price']) # Save the potentially updated total_price
     total = cart.total_price
 
     if total <= 0: messages.error(request, "ยอดชำระเงินไม่ถูกต้อง (฿0.00)"); return redirect('outfits:cart')
@@ -199,15 +211,16 @@ def confirm_payment_view(request):
     except Cart.DoesNotExist: messages.info(request, "ไม่พบตะกร้าที่รอการชำระเงิน"); return redirect('outfits:order_history')
     
     if request.method == 'POST':
-        form = PaymentConfirmationForm(request.POST, request.FILES) # This is a simple forms.Form
+        form = PaymentConfirmationForm(request.POST, request.FILES)
         if form.is_valid():
             cart.payment_slip = form.cleaned_data['slip']
             cart.is_paid = True
             cart.paid_at = timezone.now()
             cart.rental_status = 'payment_confirmed'
-            cart.save() # Save all changes to the cart
+            cart.save() # Save all changes made to the cart instance
             if 'cart_id' in request.session and request.session['cart_id'] == cart.id: del request.session['cart_id']
-            messages.success(request, "การชำระเงินได้รับการยืนยันแล้ว"); return redirect('outfits:payment_success')
+            messages.success(request, "การชำระเงินได้รับการยืนยันแล้ว คำสั่งซื้อกำลังดำเนินการ")
+            return redirect('outfits:payment_success')
         else: messages.error(request, "ข้อมูลในฟอร์มยืนยันการชำระเงินไม่ถูกต้อง")
     else: form = PaymentConfirmationForm()
     return render(request, 'outfits/confirm_payment.html', {'form': form, 'cart': cart})
@@ -223,8 +236,8 @@ def order_history_view(request):
     orders_qs = Cart.objects.filter(user=request.user, is_paid=True).order_by('-paid_at')
     processed_orders_context = []
     
-    # Store forms with errors if POST fails, to re-render them
-    error_forms = {} # Key: order_id, Value: {'upload_form': form_with_error, 'return_form': form_with_error}
+    # Store form with errors if POST fails, to re-render them for the correct order
+    form_with_error_context = {} # Key: order_id, Value: {'form_type': 'upload_form'/'return_form', 'form_instance': form_with_error}
 
     if request.method == 'POST':
         order_id_from_post = request.POST.get('order_id')
@@ -237,8 +250,8 @@ def order_history_view(request):
                     # Optionally update status: order_instance.rental_status = 'issue_reported'; order_instance.save()
                     return redirect('outfits:order_history')
                 else:
-                    messages.error(request, f"อัปโหลดรูปภาพแจ้งปัญหาล้มเหลว: {form.errors.as_text()}")
-                    error_forms[order_instance.id] = {'upload_form': form}
+                    messages.error(request, f"อัปโหลดรูปภาพแจ้งปัญหาล้มเหลวสำหรับ #{order_instance.id}: {form.errors.as_ul()}")
+                    form_with_error_context = {'order_id': order_instance.id, 'form_type': 'upload_form', 'form_instance': form}
             elif 'submit_return_shipment' in request.POST:
                 form = ReturnShipmentForm(request.POST, request.FILES, instance=order_instance, prefix=f"return_shipment_{order_instance.id}")
                 if form.is_valid():
@@ -248,23 +261,26 @@ def order_history_view(request):
                     messages.success(request, f"ข้อมูลการส่งคืนสำหรับคำสั่งซื้อ #{order_instance.id} ได้รับการบันทึกแล้ว")
                     return redirect('outfits:order_history')
                 else:
-                    messages.error(request, f"บันทึกข้อมูลการส่งคืนล้มเหลว: {form.errors.as_text()}")
-                    error_forms[order_instance.id] = {'return_form': form}
+                    messages.error(request, f"บันทึกข้อมูลการส่งคืนล้มเหลวสำหรับ #{order_instance.id}: {form.errors.as_ul()}")
+                    form_with_error_context = {'order_id': order_instance.id, 'form_type': 'return_form', 'form_instance': form}
         except Cart.DoesNotExist: messages.error(request, "ไม่พบคำสั่งซื้อ")
 
     today = timezone.now().date()
     for order in orders_qs:
-        # Use form with error if it exists for this order, otherwise create a new one
-        upload_form_instance = error_forms.get(order.id, {}).get('upload_form') or \
-                               CustomerOrderImageUploadForm(instance=order, prefix=f"order_img_{order.id}")
-        return_form_instance = error_forms.get(order.id, {}).get('return_form') or \
-                               ReturnShipmentForm(instance=order, prefix=f"return_shipment_{order.id}")
+        upload_form_instance = CustomerOrderImageUploadForm(instance=order, prefix=f"order_img_{order.id}")
+        return_form_instance = ReturnShipmentForm(instance=order, prefix=f"return_shipment_{order.id}")
+
+        if form_with_error_context.get('order_id') == order.id:
+            if form_with_error_context.get('form_type') == 'upload_form':
+                upload_form_instance = form_with_error_context.get('form_instance')
+            elif form_with_error_context.get('form_type') == 'return_form':
+                return_form_instance = form_with_error_context.get('form_instance')
         
         show_return_form_flag = False
         latest_return_date_for_order = order.get_latest_return_date()
         if order.is_paid and \
            order.rental_status in ['shipped', 'delivered'] and \
-           not order.return_tracking_number:
+           not order.return_tracking_number: # Only show if not already returned
             if latest_return_date_for_order and latest_return_date_for_order <= today:
                 show_return_form_flag = True
         

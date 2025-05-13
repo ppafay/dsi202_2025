@@ -1,12 +1,47 @@
 {% extends "outfits/base.html" %}
 
-{% block content %}
-<h2>เช่าชุดสำเร็จ!</h2>
-<p>คุณได้เช่า <strong>"{{ outfit.name }}"</strong></p>
-<p>ตั้งแต่: <strong>{{ start|date:"d M Y" }}</strong></p>
-<p>ถึง: <strong>{{ end|date:"d M Y" }}</strong></p>
-<p>รวมระยะเวลา: <strong>{{ days }} วัน</strong></p>
-<p>ราคารวม: <strong>฿{{ total_price|floatformat:2 }}</strong></p>
+{% block title %}เช่าชุดสำเร็จ - MindVibe{% endblock %}
 
-<a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary" style="margin-top: 1.5rem;">← กลับไปดูรายการชุด</a>
+{% block extra_head %}
+<style>
+  .rent-success-card {
+    max-width: 600px;
+    margin: var(--space-10) auto;
+    padding: var(--space-6);
+    background-color: var(--background-card);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    border-left: 6px solid var(--primary-action-bg);
+    text-align: center;
+  }
+
+  .rent-success-card h2 {
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-4);
+  }
+
+  .rent-success-card p {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .rent-success-card .btn {
+    margin-top: var(--space-5);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="rent-success-card">
+    <h2>🎉 เช่าชุดสำเร็จ!</h2>
+    <p>คุณได้เช่า <strong>"{{ outfit.name }}"</strong></p>
+    <p>ระยะเวลาเช่า: <strong>{{ start|date:"d M Y" }} - {{ end|date:"d M Y" }}</strong></p>
+    <p>รวมทั้งสิ้น: <strong>{{ days }} วัน</strong></p>
+    <p>ราคารวม: <strong>฿{{ total_price|floatformat:2 }}</strong></p>
+
+    <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary">← เลือกชุดเพิ่มเติม</a>
+  </div>
+</div>
 {% endblock %}

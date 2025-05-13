@@ -4,122 +4,231 @@
 {% block title %}ตะกร้าสินค้า - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/cart.css' %}">
-    <style>
-        .date-selection-form label { font-size: 0.85em; margin-bottom: 0.2rem; display: block; }
-        .date-selection-form .form-control-sm { margin-bottom: 0.5rem; }
-        .item-rental-info p { margin-bottom: 0.3rem; font-size: 0.9em;}
-        .update-dates-btn { margin-top: 0.5rem;}
-        .errorlist { color: red; font-size: 0.8em; list-style-type: none; padding-left: 0;}
-    </style>
+<style>
+  .cart-layout {
+    display: flex;
+    gap: var(--space-6);
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .cart-items-column {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .cart-summary-column {
+    flex-basis: 320px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .cart-layout {
+      flex-direction: column;
+    }
+
+    .cart-summary-column {
+      width: 100%;
+      flex-basis: auto;
+    }
+  }
+
+  .cart-items-card,
+  .summary-card {
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-6);
+    background-color: var(--background-card);
+  }
+
+  .cart-item {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--border-color-soft);
+  }
+
+  .cart-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .item-details {
+    flex-grow: 1;
+  }
+
+  .item-details h3 {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .item-price-each,
+  .item-rental-info p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .item-actions .remove-link {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .item-actions .remove-link:hover {
+    color: var(--danger-color, #dc3545);
+  }
+
+  .date-selection-form {
+    margin-top: var(--space-2);
+    padding: var(--space-4);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--background-muted, #f9f9f9);
+  }
+
+  .summary-list dt,
+  .summary-list dd {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+  }
+
+  .summary-total {
+    font-weight: 600;
+    margin-top: var(--space-2);
+  }
+
+  .checkout-button {
+    border-radius: 999px;
+    width: 100%;
+    margin-top: var(--space-4);
+    font-weight: 500;
+  }
+
+  .continue-shopping-link {
+    display: block;
+    text-align: center;
+    font-size: 0.95rem;
+    margin-top: var(--space-3);
+    color: var(--link-color);
+  }
+
+  .continue-shopping-link:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+  }
+
+  .empty-cart-message {
+    text-align: center;
+    margin: var(--space-12) 0;
+  }
+
+  .text-muted {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: var(--space-2);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <section class="cart-section">
-    <div class="container">
-        <h2 class="page-title">🛒 ตะกร้าสินค้าของคุณ</h2>
+  <div class="container">
+    <h2 class="page-title">🛒 ตะกร้าสินค้าของคุณ</h2>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% if not cart or not forms_with_items %}
-            <div class="empty-cart-message">
-                <p>ตะกร้าของคุณยังว่างเปล่าอยู่เลยค่ะ</p>
-                <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary">เลือกชมชุดสวยๆ ต่อเลย!</a>
+    {% if not cart or not forms_with_items %}
+      <div class="empty-cart-message">
+        <p>ตะกร้าของคุณยังว่างเปล่าอยู่เลยค่ะ</p>
+        <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary">เลือกชมชุดสวยๆ ต่อเลย!</a>
+      </div>
+    {% else %}
+    <div class="cart-layout">
+      <main class="cart-items-column">
+        <div class="cart-items-card">
+          {% for form_item_pair in forms_with_items %}
+          {% with item=form_item_pair.item date_form=form_item_pair.date_form %}
+          <div class="cart-item">
+            <div class="item-image">
+              <a href="{% url 'outfits:outfit-detail' item.outfit.id %}">
+                {% if item.outfit.image %}
+                  <img src="{{ item.outfit.image.url }}" alt="{{ item.outfit.name }}">
+                {% else %}
+                  <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image">
+                {% endif %}
+              </a>
             </div>
-        {% else %}
-            <div class="cart-layout">
-                <main class="cart-items-column">
-                    <div class="cart-items-card">
-                        {% for form_item_pair in forms_with_items %}
-                        {% with item=form_item_pair.item date_form=form_item_pair.date_form %}
-                        <div class="cart-item">
-                            <div class="item-image">
-                                <a href="{% url 'outfits:outfit-detail' item.outfit.id %}">
-                                {% if item.outfit.image and item.outfit.image.url %}
-                                    <img src="{{ item.outfit.image.url }}" alt="{{ item.outfit.name }}">
-                                {% else %}
-                                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available">
-                                {% endif %}
-                                </a>
-                            </div>
-                            <div class="item-details">
-                                <h3><a href="{% url 'outfits:outfit-detail' item.outfit.id %}">{{ item.outfit.name }}</a></h3>
-                                <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / วัน</p>
-                                <p class="item-price-each">จำนวน: {{ item.quantity }}</p>
+            <div class="item-details">
+              <h3><a href="{% url 'outfits:outfit-detail' item.outfit.id %}">{{ item.outfit.name }}</a></h3>
+              <p class="item-price-each">฿{{ item.outfit.price|floatformat:2 }} / วัน</p>
+              <p class="item-price-each">จำนวน: {{ item.quantity }}</p>
 
-                                {% if item.start_date and item.end_date %}
-                                    <div class="item-rental-info">
-                                        <p><strong>เช่าวันที่:</strong> {{ item.start_date|date:"d M Y" }}</p>
-                                        <p><strong>ถึงวันที่:</strong> {{ item.end_date|date:"d M Y" }}</p>
-                                        <p><strong>รวม:</strong> {{ item.get_rental_days }} วัน</p>
-                                        <p><strong>ราคาเช่ารายการนี้:</strong> ฿{{ item.get_total_item_price|floatformat:2 }}</p>
-                                        {% if not cart.is_paid %}
-                                        <small><a href="#" onclick="event.preventDefault(); document.getElementById('date_form_{{ item.id }}').style.display='block'; this.style.display='none';">แก้ไขวันเช่า</a></small>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
+              {% if item.start_date and item.end_date %}
+              <div class="item-rental-info">
+                <p><strong>เช่า:</strong> {{ item.start_date|date:"d M Y" }} - {{ item.end_date|date:"d M Y" }}</p>
+                <p><strong>รวม:</strong> {{ item.get_rental_days }} วัน</p>
+                <p><strong>ราคารวม:</strong> ฿{{ item.get_total_item_price|floatformat:2 }}</p>
+                {% if not cart.is_paid %}
+                  <small><a href="#" onclick="event.preventDefault(); document.getElementById('date_form_{{ item.id }}').style.display='block'; this.style.display='none';">แก้ไขวันเช่า</a></small>
+                {% endif %}
+              </div>
+              {% endif %}
 
-                                {% if date_form and not cart.is_paid %}
-                                <form method="post" action="{% url 'outfits:update_cart_item_dates' item.id %}" class="date-selection-form" id="date_form_{{ item.id }}" style="{% if item.start_date and item.end_date %}display:none;{% endif %} margin-top:10px;">
-                                    {% csrf_token %}
-                                    <div>{{ date_form.start_date.label_tag }} {{ date_form.start_date }} {{ date_form.start_date.errors }}</div>
-                                    <div>{{ date_form.end_date.label_tag }} {{ date_form.end_date }} {{ date_form.end_date.errors }}</div>
-                                    <button type="submit" class="btn btn-sm btn-success update-dates-btn">
-                                        {% if item.start_date and item.end_date %}อัปเดตวัน{% else %}เลือกวันเช่า{% endif %}
-                                    </button>
-                                </form>
-                                {% elif not item.start_date or not item.end_date and not cart.is_paid %}
-                                    <p class="text-danger small">กรุณาเลือกวันเช่า</p>
-                                {% endif %}
-                            </div>
-                            <div class="item-total-price">
-                                <p>฿{{ item.get_total_item_price|floatformat:2 }}</p>
-                            </div>
-                            <div class="item-actions">
-                               {% if not cart.is_paid %}
-                               <a href="{% url 'outfits:remove_from_cart' item.id %}" class="remove-link" title="ลบรายการนี้">×</a>
-                               {% endif %}
-                            </div>
-                        </div>
-                        {% endwith %}
-                        {% endfor %}
-                    </div>
-                </main>
-
-                <aside class="cart-summary-column">
-                    <div class="summary-card">
-                        <h4>สรุปยอดคำสั่งซื้อ</h4>
-                        <dl class="summary-list">
-                            <dt>ยอดรวมสินค้า:</dt>
-                            <dd>฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
-                            <dt class="summary-total">ยอดรวมสุทธิ:</dt>
-                            <dd class="summary-total-value">฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
-                        </dl>
-
-                        {% if cart.cart_items_cart.exists and not cart.is_paid %}
-                            {% if all_dates_selected_for_cart %}
-                                <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
-                            {% else %}
-                                <p class="text-danger small">กรุณาเลือกวันเช่าสำหรับทุกรายการให้ครบถ้วน</p>
-                                <button class="btn btn-primary btn-lg checkout-button" disabled>ดำเนินการชำระเงิน</button>
-                            {% endif %}
-                        {% elif cart.is_paid %}
-                             <p class="text-success small">ตะกร้านี้ได้ชำระเงินแล้ว</p>
-                        {% else %}
-                             <button class="btn btn-primary btn-lg checkout-button" disabled>ดำเนินการชำระเงิน</button>
-                        {% endif %}
-                        <a href="{% url 'outfits:outfit-list' %}" class="continue-shopping-link">← หรือเลือกซื้อสินค้าต่อ</a>
-                    </div>
-                </aside>
+              {% if date_form and not cart.is_paid %}
+              <form method="post" action="{% url 'outfits:update_cart_item_dates' item.id %}" class="date-selection-form" id="date_form_{{ item.id }}" style="{% if item.start_date and item.end_date %}display:none;{% endif %}">
+                {% csrf_token %}
+                <div>{{ date_form.start_date.label_tag }} {{ date_form.start_date }} {{ date_form.start_date.errors }}</div>
+                <div>{{ date_form.end_date.label_tag }} {{ date_form.end_date }} {{ date_form.end_date.errors }}</div>
+                <button type="submit" class="btn btn-sm btn-success">อัปเดตวัน</button>
+              </form>
+              {% endif %}
             </div>
-        {% endif %}
+            <div class="item-total-price">
+              <p>฿{{ item.get_total_item_price|floatformat:2 }}</p>
+            </div>
+            <div class="item-actions">
+              {% if not cart.is_paid %}
+              <a href="{% url 'outfits:remove_from_cart' item.id %}" class="remove-link">×</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endwith %}
+          {% endfor %}
+        </div>
+      </main>
+
+      <aside class="cart-summary-column">
+        <div class="summary-card">
+          <h4>สรุปยอดคำสั่งซื้อ</h4>
+          <dl class="summary-list">
+            <dt>ยอดรวมสินค้า:</dt>
+            <dd>฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
+            <dt class="summary-total">ยอดรวมสุทธิ:</dt>
+            <dd>฿{{ cart.total_price|default:"0.00"|floatformat:2 }}</dd>
+          </dl>
+
+          {% if cart.cart_items_cart.exists and not cart.is_paid %}
+            {% if all_dates_selected_for_cart %}
+              <a href="{% url 'outfits:payment' %}" class="btn btn-primary btn-lg checkout-button">ดำเนินการชำระเงิน</a>
+            {% else %}
+              <button class="btn btn-primary btn-lg checkout-button" disabled>ดำเนินการชำระเงิน</button>
+              <p class="text-muted text-center">กรุณาเลือกวันเช่าสำหรับทุกรายการ</p>
+            {% endif %}
+          {% elif cart.is_paid %}
+            <p class="text-success small">ตะกร้านี้ได้ชำระเงินแล้ว</p>
+          {% endif %}
+
+          <a href="{% url 'outfits:outfit-list' %}" class="continue-shopping-link">← หรือเลือกซื้อสินค้าต่อ</a>
+        </div>
+      </aside>
     </div>
+    {% endif %}
+  </div>
 </section>
 {% endblock %}

@@ -4,40 +4,75 @@
 {% block title %}ผลการค้นหา - MindVibe{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/list.css' %}"> {# Assuming search results use list styling #}
+<link rel="stylesheet" href="{% static 'outfits/list.css' %}">
+<style>
+  .search-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+  }
+
+  .search-header h2 {
+    color: var(--text-primary);
+    font-size: 2rem;
+  }
+
+  .search-form {
+    max-width: 500px;
+    margin: 0 auto var(--space-6);
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .search-form input {
+    flex: 1;
+  }
+
+  .no-outfits-found {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-top: var(--space-10);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2 class="page-title">ผลการค้นหาสำหรับ "{{ query|default:"" }}"</h2>
+  <div class="search-header">
+    <h2>🔍 ผลการค้นหา: "{{ query|default:"" }}"</h2>
+  </div>
 
-    {% if results %}
-    <div class="outfit-grid">
-        {% for result in results %}
-        <div class="outfit-card">
-            <a href="{% url 'outfits:outfit-detail' result.id %}" class="image-link">
-                {% if result.image and result.image.url %}
-                    <img src="{{ result.image.url }}" alt="{{ result.name }}">
-                {% else %}
-                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available for {{ result.name }}">
-                {% endif %}
-            </a>
-            <div class="card-content">
-                <h3><a href="{% url 'outfits:outfit-detail' result.id %}">{{ result.name }}</a></h3>
-                <p class="price-tag">฿{{ result.price|floatformat:2 }} / วัน</p>
-                <form method="post" action="{% url 'outfits:add_to_cart' result.id %}" class="add_to_cart_form">
-                    {% csrf_token %}
-                    {% comment %} Quantity input removed as it's 1 for rentals {% endcomment %}
-                    <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
-                </form>
-            </div>
-        </div>
-        {% endfor %}
+  <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
+    <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q }}" class="form-control">
+    <button type="submit" class="btn btn-primary">ค้นหา</button>
+  </form>
+
+  {% if results %}
+  <div class="outfit-grid">
+    {% for result in results %}
+    <div class="outfit-card">
+      <a href="{% url 'outfits:outfit-detail' result.id %}" class="image-link">
+        {% if result.image and result.image.url %}
+          <img src="{{ result.image.url }}" alt="{{ result.name }}">
+        {% else %}
+          <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image">
+        {% endif %}
+      </a>
+      <div class="card-content">
+        <h3><a href="{% url 'outfits:outfit-detail' result.id %}">{{ result.name }}</a></h3>
+        <p class="price-tag">฿{{ result.price|floatformat:2 }} / วัน</p>
+        <form method="post" action="{% url 'outfits:add_to_cart' result.id %}" class="add_to_cart_form">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-primary">เพิ่มลงตะกร้า</button>
+        </form>
+      </div>
     </div>
-    {% else %}
-    <p class="no-outfits-found">
-        ไม่พบชุดที่ตรงกับคำค้นหา "{{ query }}" ลองค้นหาด้วยคำอื่นดูนะคะ
-    </p>
-    {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="no-outfits-found">
+    ไม่พบชุดที่ตรงกับคำว่า "<strong>{{ query|default:"..." }}</strong>" ลองใช้คำอื่นดูนะคะ
+  </p>
+  {% endif %}
 </div>
 {% endblock %}

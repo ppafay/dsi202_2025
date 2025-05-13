@@ -20,25 +20,17 @@ class CartItemInline(admin.TabularInline):
     model = CartItem; extra = 0
     readonly_fields = ('outfit_link_inline', 'outfit_price_per_day', 'rental_days_display', 'calculated_item_price', 'item_price_at_rental')
     fields = ('outfit', 'outfit_link_inline', 'quantity', 'start_date', 'end_date', 'outfit_price_per_day', 'rental_days_display', 'item_price_at_rental', 'calculated_item_price')
-    # Making start_date, end_date editable in inline can be complex if they affect pricing immediately.
-    # Usually better to edit them on the CartItem detail page if complex logic is involved.
 
     def outfit_link_inline(self, obj):
         if obj.outfit: link = reverse("admin:outfits_outfit_change", args=[obj.outfit.id]); return format_html('<a href="{}">{}</a>', link, obj.outfit.name)
         return "-"
     outfit_link_inline.short_description = 'ชื่อชุด'
-
     def outfit_price_per_day(self, obj): return f"฿{obj.outfit.price:,.2f}" if obj.outfit else "N/A"
     outfit_price_per_day.short_description = 'ราคา/วัน'
-
     def rental_days_display(self, obj): return obj.get_rental_days()
     rental_days_display.short_description = 'วันเช่า'
-
-    def calculated_item_price(self, obj): # This shows the dynamically calculated price based on current dates
-        return f"฿{obj.get_total_item_price():,.2f}"
-    calculated_item_price.short_description = 'ราคารวม (คำนวณสด)'
-    
-    # item_price_at_rental is already a field, can be added to 'fields' to show stored value.
+    def calculated_item_price(self, obj): return f"฿{obj.get_total_item_price():,.2f}"
+    calculated_item_price.short_description = 'ราคารวม (สด)'
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
@@ -55,9 +47,10 @@ class CartAdmin(admin.ModelAdmin):
     list_editable = ('rental_status', 'is_paid')
 
     actions = ['mark_as_payment_confirmed', 'mark_as_processing', 'mark_as_shipped', 'mark_as_delivered', 'mark_as_customer_returning','mark_as_returned_received', 'mark_as_completed', 'mark_as_cancelled']
-    def _update_status(self, request, queryset, status_key, message_suffix):
+    
+    def _update_status(self, request, queryset, status_key, message_suffix): # Helper method
         updated_count = queryset.update(rental_status=status_key)
-        if status_key == 'payment_confirmed': # Also mark as paid and set paid_at
+        if status_key == 'payment_confirmed':
             queryset.update(is_paid=True, paid_at=timezone.now())
         self.message_user(request, f"{updated_count} รายการถูกเปลี่ยนสถานะเป็น '{message_suffix}'")
 
@@ -79,8 +72,8 @@ class CartAdmin(admin.ModelAdmin):
     mark_as_cancelled.short_description = "สถานะ: ยกเลิกแล้ว"
 
     def user_display(self, o): return o.user.username if o.user else "Guest"; user_display.short_description='ผู้ใช้งาน'
-    def total_price_display(self, o): o.calculate_total_price(); return f"฿{o.total_price:,.2f}"; total_price_display.short_description='ยอดรวม'; total_price_display.admin_order_field='total_price'
-    def total_price_display_field(self, o): o.calculate_total_price(); return f"฿{o.total_price:,.2f}"; total_price_display_field.short_description='ยอดรวม (คำนวณ)'
+    def total_price_display(self, o): o.calculate_and_set_total_price(); return f"฿{o.total_price:,.2f}"; total_price_display.short_description='ยอดรวม'; total_price_display.admin_order_field='total_price'
+    def total_price_display_field(self, o): o.calculate_and_set_total_price(); return f"฿{o.total_price:,.2f}"; total_price_display_field.short_description='ยอดรวม (คำนวณ)'
     def paid_at_display(self, o): return o.paid_at.strftime("%d %b %Y, %H:%M") if o.paid_at else "-"; paid_at_display.short_description='ชำระเงินเมื่อ'; paid_at_display.admin_order_field='paid_at'
     def created_at_display(self, o): return o.created_at.strftime("%d %b %Y, %H:%M") if o.created_at else "-"; created_at_display.short_description='สร้างเมื่อ'; created_at_display.admin_order_field='created_at'
     def item_count_display(self, o): return o.item_count; item_count_display.short_description='จำนวนรายการ'
@@ -93,21 +86,26 @@ class CartAdmin(admin.ModelAdmin):
     def return_shipment_image_preview(self, o):
         if o.return_shipment_image: return format_html(f'<a href="{o.return_shipment_image.url}" target="_blank"><img src="{o.return_shipment_image.url}" width="100" height="100" style="object-fit:cover;border:1px solid #ddd;"/></a>')
         return "(No return image)"; return_shipment_image_preview.short_description='รูปหลักฐานส่งคืน'
-    def save_model(self, r, o, f, c): o.calculate_total_price(); super().save_model(r, o, f, c)
-    def save_formset(self, r, f, fs, c):
-        super().save_formset(r, f, fs, c)
-        if fs.instance and isinstance(fs.instance, Cart):
-            current_total = fs.instance.calculate_total_price()
-            if fs.instance.total_price != current_total:
-                 fs.instance.total_price = current_total
-                 fs.instance.save(update_fields=['total_price'])
+    
+    def save_model(self, request, obj, form, change):
+        obj.calculate_and_set_total_price() # Ensure total price is calculated based on items
+        super().save_model(request, obj, form, change)
+
+    def save_formset(self, request, form, formset, change):
+        super().save_formset(request, form, formset, change)
+        if formset.instance and isinstance(formset.instance, Cart):
+            current_total = formset.instance.calculate_and_set_total_price()
+            if formset.instance.total_price != current_total: # Check if it was actually changed by calculate_and_set_total_price
+                 formset.instance.total_price = current_total
+            formset.instance.save(update_fields=['total_price'])
+
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('id','cart_link','outfit_link','quantity','start_date_display','end_date_display','rental_days_display','calculated_price_display', 'item_price_at_rental_display_col')
     list_filter = ('start_date', 'end_date', 'cart__is_paid'); search_fields = ('outfit__name', 'cart__id', 'cart__user__username')
     autocomplete_fields = ['outfit', 'cart']; list_editable = ('quantity',); list_per_page = 25; ordering = ('-cart__id', 'id')
-    fields = ('cart','outfit','quantity','start_date','end_date','item_price_at_rental_display'); readonly_fields = ('item_price_at_rental_display',) # This is for detail view
+    fields = ('cart','outfit','quantity','start_date','end_date','item_price_at_rental_display'); readonly_fields = ('item_price_at_rental_display',)
     
     def cart_link(self, o):
         if o.cart: l=reverse("admin:outfits_cart_change",args=[o.cart.id]);ui=f" (User: {o.cart.user.username})" if o.cart.user else " (Guest)"; return format_html(f'<a href="{l}">Cart #{o.cart.id}{ui}</a>')
@@ -118,24 +116,28 @@ class CartItemAdmin(admin.ModelAdmin):
     def start_date_display(self, o): return o.start_date.strftime("%d %b %Y") if o.start_date else "-"; start_date_display.short_description='เริ่มเช่า'; start_date_display.admin_order_field='start_date'
     def end_date_display(self, o): return o.end_date.strftime("%d %b %Y") if o.end_date else "-"; end_date_display.short_description='วันคืน'; end_date_display.admin_order_field='end_date'
     def rental_days_display(self, o): return o.get_rental_days(); rental_days_display.short_description='วัน'
-    def calculated_price_display(self, o): return f"฿{o.get_total_item_price():,.2f}"; calculated_price_display.short_description='ราคารวม (สด)'
+    def calculated_price_display(self, o): return f"฿{o.get_total_item_price():,.2f}"; calculated_price_display.short_description='ราคารวม (สด)' # Based on current dates
     def item_price_at_rental_display_col(self,o): return f"฿{o.item_price_at_rental:,.2f}"; item_price_at_rental_display_col.short_description='ราคาที่บันทึก'; item_price_at_rental_display_col.admin_order_field='item_price_at_rental'
-    def item_price_at_rental_display(self,o): return f"฿{o.item_price_at_rental:,.2f}"; item_price_at_rental_display.short_description='ราคาที่บันทึกไว้สำหรับรายการนี้' # For detail view
+    def item_price_at_rental_display(self,o): return f"฿{o.item_price_at_rental:,.2f}"; item_price_at_rental_display.short_description='ราคาที่บันทึกไว้สำหรับรายการนี้'
 
-    def save_model(self, r,o,f,c):
+    def save_model(self, request, obj, form, change):
         # item_price_at_rental is set in CartItem.save()
-        super().save_model(r,o,f,c)
-        # CartItem.save() already updates cart total, so no need to do it again here explicitly unless specific admin logic requires.
-    def delete_model(self, r,o):
-        # CartItem.delete() (overridden method) already updates cart total.
-        super().delete_model(r,o)
-    def delete_queryset(self, r, qs):
+        super().save_model(request, obj, form, change)
+        # CartItem.save() now handles updating the cart's total_price.
+
+    def delete_model(self, request, obj):
+        # CartItem.delete() (overridden method) now handles updating the cart's total_price.
+        super().delete_model(request, obj)
+
+    def delete_queryset(self, request, queryset):
         carts_to_update=set()
-        for item in qs:
+        for item in queryset:
             if item.cart: carts_to_update.add(item.cart)
-        super().delete_queryset(r,qs)
-        for cart_obj in carts_to_update:
-            new_total = cart_obj.calculate_total_price()
-            if cart_obj.total_price != new_total:
-                cart_obj.total_price = new_total
-                cart_obj.save(update_fields=['total_price'])
+        
+        super().delete_queryset(request, queryset) # Delete items first
+        
+        for cart_obj in carts_to_update: # Then update affected carts
+            current_total = cart_obj.calculate_and_set_total_price()
+            if cart_obj.total_price != current_total:
+                cart_obj.total_price = current_total
+            cart_obj.save(update_fields=['total_price'])

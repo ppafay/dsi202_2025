@@ -3,18 +3,96 @@
 
 {% block title %}ยืนยันการชำระเงิน - MindVibe{% endblock %}
 
+{% block extra_head %}
+<style>
+  .confirm-payment-card {
+    max-width: 560px;
+    margin: var(--space-10) auto;
+    background-color: var(--background-muted, #fdfdfd);
+    padding: var(--space-8);
+    border-radius: 32px; /* โค้งมนมากขึ้น */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    text-align: center;
+  }
+
+  .confirm-payment-card h2 {
+    color: var(--primary-action-bg);
+    font-size: 1.9rem;
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+  }
+
+  .confirm-payment-card p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-5);
+  }
+
+  .confirm-payment-card .form-group,
+  .confirm-payment-card form p {
+    text-align: left;
+    margin-bottom: var(--space-5);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+
+  .confirm-payment-card input[type="file"],
+  .confirm-payment-card input[type="text"],
+  .confirm-payment-card input[type="email"],
+  .confirm-payment-card textarea {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-color-soft);
+    border-radius: var(--border-radius-md);
+    font-size: 0.95rem;
+  }
+
+  .confirm-payment-card .btn {
+    padding: var(--space-2) var(--space-5);
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-xs);
+    width: 100%;
+  }
+
+  .confirm-payment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--link-color);
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="payment-confirm">
-    <h2>แนบสลิปการโอนเงิน</h2>
-    <p>ยอดรวม: <strong>฿{{ cart.total_price|floatformat:2 }}</strong></p>
-    
+<div class="container">
+  <div class="confirm-payment-card">
+    <h2>📎 แนบสลิปการชำระเงิน</h2>
+    <p>ยอดรวมที่ต้องชำระ: <strong>฿{{ cart.total_price|floatformat:2 }}</strong></p>
+
     <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">ยืนยันการชำระเงิน</button>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="confirm-payment-actions">
+        <button type="submit" class="btn btn-primary">✅ ยืนยันการชำระเงิน</button>
+        <a href="{% url 'outfits:payment' %}" class="btn btn-outline-secondary">← กลับหน้าชำระเงิน</a>
+      </div>
     </form>
 
-    <br>
-    <a href="{% url 'outfits:payment' %}" class="btn btn-secondary">ย้อนกลับ</a>
+    <a href="{% url 'outfits:cart' %}" class="back-link">← หรือกลับไปดูตะกร้า</a>
+  </div>
 </div>
 {% endblock %}

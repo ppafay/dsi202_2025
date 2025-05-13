@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google', # ถ้าใช้
-
+    'widget_tweaks',
 ]
 
 SITE_ID = 1
@@ -124,3 +124,4 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
 PROMPTPAY_NUMBER = os.environ.get("PROMPTPAY_NUMBER", "0891234567")
+

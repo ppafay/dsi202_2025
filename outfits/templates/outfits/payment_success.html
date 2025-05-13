@@ -5,40 +5,73 @@
 
 {% block extra_head %}
 <style>
-    .payment-success-container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 30px;
-        text-align: center;
-        background-color: #e9f7ef; /* Light green background */
-        border: 1px solid #a7d7c5; /* Nature green border */
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
-    }
-    .payment-success-container h2 {
-        color: #28a745; /* Success green */
-        margin-bottom: 15px;
-    }
-    .payment-success-container .lead {
-        font-size: 1.1rem;
-        color: #3D4F53; /* Text dark */
-        margin-bottom: 25px;
-    }
-    .payment-success-container .btn {
-        margin-top: 10px;
-    }
+  .payment-success-container {
+    max-width: 560px;
+    margin: var(--space-10) auto;
+    padding: var(--space-8);
+    background-color: var(--background-muted, #fdfdfd);
+    border-radius: 32px; /* <<< โค้งมนมากขึ้น */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    text-align: center;
+  }
+
+  .payment-success-icon {
+    font-size: 3.2rem;
+    color: var(--nature-green-main);
+    margin-bottom: var(--space-4);
+  }
+
+  .payment-success-container h2 {
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .payment-success-container p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
+  .payment-success-container hr {
+    margin: var(--space-6) 0;
+    border-top: 1px solid var(--border-color-soft);
+  }
+
+  .payment-success-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-3);
+  }
+
+  .payment-success-actions .btn {
+    padding: var(--space-2) var(--space-5);
+    border-radius: 999px; /* <<< ปุ่ม pill โค้งมนสุด */
+    font-weight: 500;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-sm);
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="payment-success-container">
-        <h2>✅ การชำระเงินเสร็จสมบูรณ์!</h2>
-        <p class="lead">ขอบคุณที่ใช้บริการ MindVibe คำสั่งซื้อของคุณได้รับการยืนยันและกำลังดำเนินการ</p>
-        <hr class="my-4">
-        <p>คุณสามารถตรวจสอบสถานะคำสั่งซื้อและรายละเอียดการเช่าได้ที่หน้าประวัติการสั่งซื้อ</p>
-        <a href="{% url 'outfits:order_history' %}" class="btn btn-info me-2">ดูประวัติการสั่งซื้อ</a>
-        <a href="{% url 'outfits:home' %}" class="btn btn-primary">กลับสู่หน้าแรก</a>
+  <div class="payment-success-container">
+    <div class="payment-success-icon">✅</div>
+    <h2>การชำระเงินสำเร็จ</h2>
+    <p>ขอบคุณที่ใช้บริการ MindVibe 🌸</p>
+    <p>คำสั่งซื้อของคุณได้รับการยืนยันเรียบร้อยแล้ว และกำลังจัดเตรียมให้คุณ</p>
+
+    <hr>
+
+    <p class="mb-1">คุณสามารถตรวจสอบประวัติการเช่าได้ทุกเมื่อ</p>
+    <div class="payment-success-actions">
+      <a href="{% url 'outfits:order_history' %}" class="btn btn-outline-secondary">ดูประวัติการสั่งซื้อ</a>
+      <a href="{% url 'outfits:home' %}" class="btn btn-primary">กลับหน้าแรก</a>
     </div>
+  </div>
 </div>
 {% endblock %}

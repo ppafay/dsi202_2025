@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import Outfit, CartItem, Cart
 from datetime import date, timedelta
+from django.utils.safestring import mark_safe # สำหรับ mark_safe ใน error message
 
 class OutfitForm(forms.ModelForm):
     class Meta:
@@ -28,26 +29,51 @@ class CartItemDateSelectionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Set initial values only if the form is not bound and instance doesn't have values
-        if not (self.is_bound or (self.instance and self.instance.pk)):
-            if not self.initial.get('start_date') and (not self.instance or not self.instance.start_date):
-                self.initial['start_date'] = date.today()
-            if not self.initial.get('end_date') and (not self.instance or not self.instance.end_date):
-                self.initial['end_date'] = date.today() + timedelta(days=2) # e.g., 3-day rental
+        if not (self.is_bound or (self.instance and self.instance.pk and self.instance.start_date)):
+            self.initial['start_date'] = date.today()
+        if not (self.is_bound or (self.instance and self.instance.pk and self.instance.end_date)):
+            # Default to a 3-day rental period (e.g., rent today, use tomorrow, return day after)
+            self.initial['end_date'] = date.today() + timedelta(days=2)
 
     def clean(self):
         cleaned_data = super().clean()
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
+        outfit_to_check = self.instance.outfit if self.instance and self.instance.outfit_id else None
 
         if start_date and end_date:
             if start_date < date.today():
                 self.add_error('start_date', "วันที่เริ่มเช่าต้องไม่ใช่วันที่ผ่านมาแล้ว")
             if end_date < start_date:
                 self.add_error('end_date', "วันที่ส่งคืนต้องไม่มาก่อนวันที่เริ่มเช่า")
-            # Minimum 1-day rental (e.g., start today, end today)
-            if (end_date - start_date).days < 0:
-                 self.add_error('end_date', "ระยะเวลาการเช่าไม่ถูกต้อง")
+            if (end_date - start_date).days < 0 : # Ensure at least 1 day rental duration
+                 self.add_error('end_date', "ระยะเวลาการเช่าไม่ถูกต้อง (อย่างน้อย 1 วัน)")
+
+            if outfit_to_check and not self.errors: # Proceed if basic date validation passed
+                # Check for overlapping rentals only for paid carts
+                overlapping_rentals = CartItem.objects.filter(
+                    outfit=outfit_to_check,
+                    cart__is_paid=True,
+                    start_date__lte=end_date, # existing_start <= new_end
+                    end_date__gte=start_date  # existing_end >= new_start
+                )
+                if self.instance and self.instance.pk: # Exclude current item if editing
+                    overlapping_rentals = overlapping_rentals.exclude(pk=self.instance.pk)
+
+                if overlapping_rentals.exists():
+                    conflict_details_list = []
+                    for rental in overlapping_rentals:
+                        user_info = ""
+                        if rental.cart and rental.cart.user:
+                             user_info = f" (ผู้เช่า: {rental.cart.user.username[:1]}***)" # Anonymize user
+                        conflict_details_list.append(
+                            f"{rental.start_date.strftime('%d/%m/%y')} - {rental.end_date.strftime('%d/%m/%y')}{user_info}"
+                        )
+                    conflict_msg = "; ".join(conflict_details_list)
+                    self.add_error(None, mark_safe(
+                        f"ชุดนี้ไม่ว่างในช่วงวันที่คุณเลือก ({start_date.strftime('%d/%m/%y')} - {end_date.strftime('%d/%m/%y')}). " \
+                        f"มีผู้เช่าแล้วในช่วง: {conflict_msg}"
+                    ))
         return cleaned_data
 
 class PaymentConfirmationForm(forms.Form):
@@ -73,7 +99,7 @@ class ReturnShipmentForm(forms.ModelForm):
     )
     return_shipment_image = forms.ImageField(
         label="แนบรูปภาพหลักฐานการส่ง (เช่น สลิปขนส่ง)",
-        required=True, # Consider making this optional if not always available
+        required=False, # Made optional
         widget=forms.ClearableFileInput(attrs={'class': 'form-control form-control-sm'})
     )
 

@@ -4,52 +4,147 @@
 {% block title %}ชุดทั้งหมด - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/list.css' %}">
+<link rel="stylesheet" href="{% static 'outfits/list.css' %}">
+<style>
+  .search-form {
+    max-width: 600px;
+    margin: 0 auto var(--space-8);
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .search-form input {
+    flex: 1;
+    border-radius: var(--border-radius-pill);
+    padding: var(--space-3);
+    font-size: 1rem;
+  }
+
+  .search-form .btn {
+    border-radius: var(--border-radius-pill);
+    padding: var(--space-2) var(--space-4);
+    white-space: nowrap;
+  }
+
+  .outfit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-8);
+  }
+
+  .outfit-card {
+    background-color: var(--background-card);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .outfit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .outfit-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color-divider);
+  }
+
+  .card-content {
+    padding: var(--space-5);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-content h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .price-tag {
+    font-weight: 500;
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-4);
+  }
+
+  .add_to_cart_form {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .quantity-selector input {
+    max-width: 60px;
+    padding: var(--space-2);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+  }
+
+  .btn-primary {
+    border-radius: var(--border-radius-pill);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .no-outfits-found {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-top: var(--space-12);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2 class="page-title">เลือกชุดที่ใช่สำหรับคุณ</h2>
+  <h2 class="page-title">เลือกชุดที่ใช่สำหรับคุณ</h2>
 
-    <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
-      <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q }}" class="form-control">
-      <button type="submit" class="btn">ค้นหา</button>
-    </form>
+  <form method="get" action="{% url 'outfits:outfit-search' %}" class="search-form">
+    <input type="text" name="q" placeholder="ค้นหาชื่อชุด, สไตล์, หรือโอกาส..." value="{{ request.GET.q }}" class="form-control">
+    <button type="submit" class="btn btn-secondary">ค้นหา</button>
+  </form>
 
-    {% if outfits %}
-    <div class="outfit-grid">
-        {% for outfit in outfits %}
-        <div class="outfit-card">
-            <a href="{% url 'outfits:outfit-detail' outfit.id %}" class="image-link">
-                {% if outfit.image %}
-                    <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
-                {% else %}
-                    <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available"> {# Placeholder เฉพาะสำหรับชุด #}
-                {% endif %}
-            </a>
-            <div class="card-content">
-                <h3><a href="{% url 'outfits:outfit-detail' outfit.id %}">{{ outfit.name }}</a></h3>
-                <p class="price-tag">฿{{ outfit.price|floatformat:2 }} / วัน</p> {# สมมติว่าราคาต่อวัน #}
-                <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="add_to_cart_form">
-                    {% csrf_token %}
-                    <div class="quantity-selector">
-                        <label for="quantity_{{ outfit.id }}" class="sr-only">จำนวน:</label> {# sr-only for screen readers if label is visually hidden #}
-                        <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1" class="form-control quantity-input">
-                    </div>
-                    <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
-                </form>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <p class="no-outfits-found">
-        {% if request.GET.q %}
-            ไม่พบชุดที่ตรงกับคำค้นหา "{{ request.GET.q }}" ลองค้นหาด้วยคำอื่นดูนะคะ
+  {% if outfits %}
+  <div class="outfit-grid">
+    {% for outfit in outfits %}
+    <div class="outfit-card">
+      <a href="{% url 'outfits:outfit-detail' outfit.id %}" class="image-link">
+        {% if outfit.image %}
+          <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}">
         {% else %}
-            ยังไม่มีชุดในระบบเลยค่ะ ลองแวะมาใหม่เร็วๆนี้นะคะ
+          <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available">
         {% endif %}
-    </p>
+      </a>
+      <div class="card-content">
+        <h3><a href="{% url 'outfits:outfit-detail' outfit.id %}">{{ outfit.name }}</a></h3>
+        <p class="price-tag">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+
+        <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="add_to_cart_form">
+          {% csrf_token %}
+          <div class="quantity-selector">
+            <label for="quantity_{{ outfit.id }}" class="sr-only">จำนวน</label>
+            <input type="number" name="quantity" id="quantity_{{ outfit.id }}" value="1" min="1" class="form-control quantity-input">
+          </div>
+          <button type="submit" class="btn btn-primary">เพิ่มลงตะกร้า</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="no-outfits-found">
+    {% if request.GET.q %}
+      ไม่พบชุดที่ตรงกับคำค้นหา "{{ request.GET.q }}" ลองค้นหาด้วยคำอื่นดูนะคะ
+    {% else %}
+      ยังไม่มีชุดในระบบเลยค่ะ ลองแวะมาใหม่เร็วๆนี้นะคะ
     {% endif %}
+  </p>
+  {% endif %}
 </div>
 {% endblock %}

@@ -1,44 +1,133 @@
 {% extends "outfits/base.html" %}
 {% load static %}
 
-{% block title %}{{ outfit.name }} - MindVibe 🌸{% endblock %}
+{% block title %}{{ outfit.name }} - MindVibe{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/detail.css' %}">
+<style>
+  .detail-container {
+    padding: var(--space-12) var(--space-4);
+  }
+
+  .breadcrumb-nav {
+    font-size: 0.95rem;
+    margin-bottom: var(--space-6);
+    color: var(--text-light);
+  }
+
+  .product-detail-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .product-detail-layout {
+      flex-direction: row;
+    }
+  }
+
+  .product-image-column {
+    flex: 1;
+  }
+
+  .product-main-image {
+    width: 100%;
+    border-radius: var(--border-radius-xl); /* <<< ขอบมนขึ้น */
+    box-shadow: var(--shadow-lg);
+    object-fit: cover;
+  }
+
+  .product-info-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--background-card);
+    padding: var(--space-8);
+    border-radius: var(--border-radius-xl); /* <<< โค้งมน */
+    box-shadow: var(--shadow-md);
+  }
+
+  .product-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .product-price {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-5);
+  }
+
+  .product-description {
+    margin-bottom: var(--space-6);
+  }
+
+  .product-description h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .product-description p {
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .rent-form .btn {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: 1rem;
+    border-radius: var(--border-radius-pill); /* <<< ปุ่ม pill โค้งมนสุด */
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rented-notice {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: var(--space-4);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container detail-container">
-    <div class="breadcrumb-nav">
-        <a href="{% url 'outfits:outfit-list' %}">ชุดทั้งหมด</a> / <span>{{ outfit.name }}</span>
+  <div class="breadcrumb-nav">
+    <a href="{% url 'outfits:outfit-list' %}">← ชุดทั้งหมด</a> / <span>{{ outfit.name }}</span>
+  </div>
+
+  <div class="product-detail-layout">
+    <div class="product-image-column">
+      {% if outfit.image and outfit.image.url %}
+        <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}" class="product-main-image">
+      {% else %}
+        <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available" class="product-main-image">
+      {% endif %}
     </div>
 
-    <div class="product-detail-layout">
-        <div class="product-image-column">
-            {% if outfit.image and outfit.image.url %}
-                <img src="{{ outfit.image.url }}" alt="{{ outfit.name }}" class="product-main-image">
-            {% else %}
-                <img src="{% static 'outfits/images/placeholder-outfit.png' %}" alt="No image available" class="product-main-image">
-            {% endif %}
-        </div>
+    <div class="product-info-column">
+      <h2 class="product-title">{{ outfit.name }}</h2>
+      <p class="product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
 
-        <div class="product-info-column">
-            <h2 class="product-title">{{ outfit.name }}</h2>
-            <p class="product-price">฿{{ outfit.price|floatformat:2 }} / วัน</p>
+      <div class="product-description">
+        <h4>รายละเอียดชุด</h4>
+        <p>{{ outfit.description|linebreaksbr|default:"ยังไม่มีคำอธิบายสำหรับชุดนี้" }}</p>
+      </div>
 
-            <div class="product-description">
-                <h4>รายละเอียดชุด:</h4>
-                <p>{{ outfit.description|linebreaksbr|default:"ยังไม่มีคำอธิบายสำหรับชุดนี้" }}</p>
-            </div>
+      <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="rent-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">🛒 เพิ่มลงตะกร้า</button>
+      </form>
 
-            <form method="post" action="{% url 'outfits:add_to_cart' outfit.id %}" class="rent-form">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary btn-lg add-to-cart-button">เพิ่มลงตะกร้า</button>
-            </form>
-             {% if outfit.is_rented %}
-                <p class="rented-notice mt-3"><small>หมายเหตุ: ชุดนี้อาจมีผู้เช่าอยู่ กรุณาตรวจสอบวันว่างในตะกร้าสินค้า</small></p>
-            {% endif %}
-        </div>
+      {% if outfit.is_rented %}
+        <p class="rented-notice"><small>หมายเหตุ: ชุดนี้อาจมีผู้เช่าอยู่ กรุณาตรวจสอบวันว่างในตะกร้าสินค้า</small></p>
+      {% endif %}
     </div>
+  </div>
 </div>
 {% endblock %}

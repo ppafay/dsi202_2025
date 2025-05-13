@@ -1,57 +1,93 @@
 {% extends "outfits/base.html" %}
+{% load static %}
 {% load socialaccount %}
+{% load widget_tweaks %} {# ถ้าคุณติดตั้ง django-widget-tweaks สามารถใช้ได้ #}
 
-{% block title %}Login - MindVibe{% endblock %}
+{% block title %}เข้าสู่ระบบ - MindVibe{% endblock %}
+
+{% block extra_head %}
+    {# สมมติว่าสไตล์สำหรับ auth อยู่ใน styles.css หลัก หรือ auth.css ที่ base.html โหลดแล้ว #}
+    {# ถ้าคุณแยกเป็น auth.css และ base.html ไม่ได้โหลด ให้ un-comment บรรทัดนี้: #}
+    {# <link rel="stylesheet" href="{% static 'outfits/auth_styles.css' %}"> #}
+{% endblock %}
 
 {% block content %}
 <div class="auth-container">
     <div class="auth-card">
-        <h2>Welcome Back 👋</h2>
-        <p>Log in to your MindVibe account</p>
+        <h2>ยินดีต้อนรับกลับมา 👋</h2>
+        <p class="auth-intro">เข้าสู่ระบบบัญชี MindVibe ของคุณ</p>
 
         {% get_providers as social_providers %}
-        {% for provider in social_providers %}
-          {% if provider.id == "google" %}
-            <a href="{% provider_login_url provider.id %}" class="google-btn">
-                <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
-                Continue with {{ provider.name }}
-            </a>
-          {% endif %}
-        {% endfor %}
+        {% if social_providers %}
+        <div class="social-login-section">
+            {% for provider in social_providers %}
+                {% if provider.id == "google" %}
+                    <a href="{% provider_login_url provider.id method='oauth2' %}" class="google-btn">
+                        <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google icon" />
+                        เข้าสู่ระบบด้วย {{ provider.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="divider"><span>หรือ</span></div>
+        {% endif %}
 
-        <div class="divider"><span>or</span></div>
-
-        <form method="POST" action="{% url 'account_login' %}">
+        <form method="POST" action="{% url 'account_login' %}" class="auth-form">
             {% csrf_token %}
-            {{ form.non_field_errors }}
+
+            {# แสดง Non-field errors (เช่น "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง") #}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
             <div class="form-group">
-                {{ form.login.label_tag }}
-                {{ form.login }}
-                {{ form.login.errors }}
+                <label for="{{ form.login.id_for_label }}">{{ form.login.label }}</label>
+                {# เพิ่ม class "form-control" ให้กับ input field #}
+                {{ form.login|add_class:"form-control" }}
+                {% if form.login.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.login.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
 
             <div class="form-group">
-                {{ form.password.label_tag }}
-                {{ form.password }}
-                {{ form.password.errors }}
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                {{ form.password|add_class:"form-control" }}
+                {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
 
-            <div class="form-group">
-                {{ form.remember.label_tag }}
+            {% if form.remember %}
+            <div class="form-group form-check">
+                {# {{ form.remember|add_class:"form-check-input" }} #} 
+                {# การเพิ่ม class ให้ checkbox อาจจะต้อง custom widget หรือ render field ด้วยมือ #}
                 {{ form.remember }}
+                <label for="{{ form.remember.id_for_label }}" class="form-check-label">{{ form.remember.label }}</label>
             </div>
+            {% endif %}
 
-            <button type="submit" class="submit-btn">Login</button>
+            <button type="submit" class="btn btn-primary btn-lg w-100">เข้าสู่ระบบ</button> {# ใช้ class btn-primary และ btn-lg, w-100 ทำให้เต็มความกว้าง #}
         </form>
 
-        <div class="bottom-text">
-            Don't have an account?
-            <a href="{% url 'account_signup' %}">Sign up</a>
+        <div class="bottom-text mt-4"> {# เพิ่ม margin-top เล็กน้อย #}
+            <a href="{% url 'account_reset_password' %}">ลืมรหัสผ่าน?</a>
         </div>
 
-        <div class="bottom-text">
-            <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
+        <div class="bottom-text mt-3">
+            ยังไม่มีบัญชี?
+            <a href="{% url 'account_signup' %}">สมัครสมาชิกที่นี่</a>
         </div>
     </div>
 </div>

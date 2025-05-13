@@ -1,9 +1,61 @@
 {% extends 'outfits/base.html' %}
+
+{% block title %}เพิ่มชุดใหม่ - MindVibe{% endblock %}
+
+{% block extra_head %}
+<style>
+  .rent-form-container {
+    max-width: 700px;
+    margin: var(--space-10) auto;
+    background-color: var(--background-card);
+    border-radius: var(--border-radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color-soft);
+  }
+
+  .rent-form-container h2 {
+    text-align: center;
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-6);
+  }
+
+  .rent-form-container .form-group {
+    margin-bottom: var(--space-5);
+  }
+
+  .rent-form-container .btn {
+    width: 100%;
+  }
+
+  .field-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>เพิ่มชุดใหม่</h2>
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">บันทึก</button>
-</form>
+<div class="container">
+  <div class="rent-form-container">
+    <h2>🧵 เพิ่มชุดใหม่เข้าสู่ระบบ</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <div class="text-danger small">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-primary">💾 บันทึกชุด</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

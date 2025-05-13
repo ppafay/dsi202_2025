@@ -10,8 +10,67 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'outfits/styles.css' %}">
+    {# <link rel="stylesheet" href="{% static 'outfits/responsive.css' %}">  #}
     {% block extra_head %}{% endblock %}
     <title>{% block title %}MindVibe 🌸{% endblock %}</title>
+    <style>
+        /* Basic Responsive Nav - Example, refine in your CSS file */
+        .nav-toggler {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-medium); /* Adjust color as needed */
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .header-container nav .nav-links { /* Target the ul directly */
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .header-container nav .nav-links li {
+             margin-left: 30px; /* As per your original styles.css */
+        }
+
+        @media (max-width: 768px) { /* Adjust breakpoint as needed */
+            .header-container nav .nav-links {
+                display: none; /* Hide by default on mobile */
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 100%; /* Position below the header */
+                left: 0;
+                background-color: var(--background-card, #fff); /* Match header or use a card background */
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                z-index: 999; /* Ensure it's above other content */
+            }
+            .header-container nav .nav-links.active {
+                display: flex; /* Show when active */
+            }
+            .header-container nav .nav-links li {
+                margin-left: 0;
+                width: 100%;
+            }
+            .header-container nav .nav-links li a,
+            .header-container nav .nav-links li form button.nav-link-button {
+                display: block;
+                padding: 1rem;
+                text-align: left; /* Or center if preferred */
+                width: 100%;
+                border-bottom: 1px solid var(--border-soft, #eee);
+            }
+            .header-container nav .nav-links li:last-child a,
+            .header-container nav .nav-links li:last-child form button.nav-link-button {
+                border-bottom: none;
+            }
+            .nav-toggler {
+                display: block; /* Show toggler on mobile */
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="page-wrapper">
@@ -19,7 +78,10 @@
             <div class="container header-container">
                 <h1><a href="{% url 'outfits:home' %}">MindVibe 🌸</a></h1>
                 <nav>
-                    <ul>
+                    <button class="nav-toggler" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">
+                        <span>☰</span> {# Hamburger Icon #}
+                    </button>
+                    <ul class="nav-links" id="navLinks">
                         <li>
                             <a href="{% url 'outfits:home' %}"
                                class="{% if request.resolver_match.app_name == 'outfits' and request.resolver_match.url_name == 'home' %}active{% endif %}">หน้าแรก</a>
@@ -53,10 +115,7 @@
                                 <a href="{% url 'account_login' %}"
                                    class="{% if request.resolver_match.url_name == 'account_login' %}active{% endif %}">เข้าสู่ระบบ</a>
                             </li>
-                            <li>
-                                <a href="{% url 'account_signup' %}"
-                                   class="{% if request.resolver_match.url_name == 'account_signup' %}active{% endif %}">สมัครสมาชิก</a>
-                            </li>
+                            {# "สมัครสมาชิก" link removed as per request #}
                         {% endif %}
                     </ul>
                 </nav>
@@ -88,6 +147,20 @@
                 <p>&copy; {% now "Y" %} MindVibe. All Rights Reserved. Sustainable Fashion For You.</p>
             </div>
         </footer>
-    </div> {% block extra_scripts %}{% endblock %}
+    </div> {% block extra_scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggler = document.querySelector('.nav-toggler');
+            const navLinks = document.querySelector('.nav-links'); // Target ul by its class
+
+            if (navToggler && navLinks) {
+                navToggler.addEventListener('click', () => {
+                    const isExpanded = navLinks.classList.toggle('active');
+                    navToggler.setAttribute('aria-expanded', isExpanded);
+                });
+            }
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>

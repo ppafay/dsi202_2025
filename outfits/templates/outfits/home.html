@@ -4,46 +4,149 @@
 {% block title %}ยินดีต้อนรับ - MindVibe 🌸{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'outfits/home.css' %}"> {# ถ้ามี CSS เฉพาะสำหรับ home.html #}
+<style>
+  .hero-section {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    background-color: var(--pastel-pink-light);
+    border-bottom: 1px solid var(--border-color-soft);
+    position: relative;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-button {
+    padding: var(--space-2) var(--space-4);
+    font-size: 1rem;
+    border-radius: 999px; /* ปุ่มโค้งมนแบบ pill */
+    display: inline-block;
+    margin-bottom: var(--space-6);
+  }
+
+  .scroll-down-arrow {
+    font-size: 2rem;
+    color: var(--text-light);
+    animation: bounce 1.8s infinite;
+    display: inline-block;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .scroll-down-arrow:hover {
+    color: var(--primary-action-bg);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  .features-section {
+    margin-top: var(--space-12);
+    padding: var(--space-12) var(--space-4);
+    background-color: var(--background-main);
+    text-align: center;
+  }
+
+  .features-section .section-heading {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-10);
+  }
+
+  .features-grid {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .features-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .feature-item {
+    background-color: var(--background-card);
+    border-radius: 28px;
+    padding: var(--space-10) var(--space-6);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .feature-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+  }
+
+  .feature-icon-placeholder {
+    font-size: 2rem;
+    margin-bottom: var(--space-4);
+    color: var(--primary-action-bg);
+  }
+
+  .feature-item h4 {
+    color: var(--primary-action-bg);
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  .feature-item p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="hero-section">
-    <div class="container text-center">
-        <h2 class="page-title hero-title">MindVibe 🌿🌸</h2>
-        <p class="hero-subtitle">
-            เช่าชุดสวย สไตล์คุณ ช่วยโลกไปด้วยกัน ✨<br>
-            เลือกชุดที่ใช่ในแบบที่ยั่งยืนกับเรา สัมผัสประสบการณ์แฟชั่นรักษ์โลก
-        </p>
-        <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary btn-lg hero-button">ค้นหาชุดโปรดของคุณ</a>
-    </div>
+  <div class="container">
+    <h2 class="hero-title">MindVibe</h2>
+    <p class="hero-subtitle">
+      เช่าชุดสวย สไตล์คุณ ช่วยโลกไปด้วยกัน ✨<br>
+      เลือกชุดที่ใช่ในแบบที่ยั่งยืนกับเรา สัมผัสประสบการณ์แฟชั่นรักษ์โลก
+    </p>
+    <a href="{% url 'outfits:outfit-list' %}" class="btn btn-primary hero-button">
+      ค้นหาชุดโปรดของคุณ
+    </a>
+    <br>
+    <a href="#features" class="scroll-down-arrow">⌄</a>
+  </div>
 </div>
 
-<div class="container features-section">
-    <h3 class="section-heading">ทำไมต้อง MindVibe?</h3>
+<div id="features" class="features-section">
+  <div class="container">
+    <h3 class="section-heading">ทำไมต้องเลือก MindVibe?</h3>
     <div class="features-grid">
-        <div class="feature-item">
-            {# ควรหา icon ที่เป็น SVG หรือ PNG ที่มีสไตล์มินิมอลมาใส่ #}
-            {# <img src="{% static 'outfits/images/icon-style.svg' %}" alt="Style Icon" class="feature-icon"> #}
-            <div class="feature-icon-placeholder">👗</div> {# Placeholder icon #}
-            <h4>หลากหลายสไตล์</h4>
-            <p>ชุดสวยหลากสไตล์ ตอบโจทย์ทุกโอกาสพิเศษของคุณ</p>
-        </div>
-        <div class="feature-item">
-            {# <img src="{% static 'outfits/images/icon-eco.svg' %}" alt="Eco Icon" class="feature-icon"> #}
-            <div class="feature-icon-placeholder">🌍</div> {# Placeholder icon #}
-            <h4>รักษ์โลก</h4>
-            <p>ลด Fast Fashion ร่วมสร้างความยั่งยืนให้โลกของเรา</p>
-        </div>
-        <div class="feature-item">
-            {# <img src="{% static 'outfits/images/icon-save.svg' %}" alt="Save Icon" class="feature-icon"> #}
-            <div class="feature-icon-placeholder">💰</div> {# Placeholder icon #}
-            <h4>คุ้มค่า</h4>
-            <p>ประหยัดกว่าซื้อ สวยได้ในทุกๆ วัน โดยไม่ต้องจ่ายแพง</p>
-        </div>
+      <div class="feature-item">
+        <div class="feature-icon-placeholder">👗</div>
+        <h4>หลากหลายสไตล์</h4>
+        <p>ชุดสวยหลากสไตล์ ตอบโจทย์ทุกโอกาสพิเศษของคุณ</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon-placeholder">🌱</div>
+        <h4>รักษ์โลก</h4>
+        <p>ลด Fast Fashion และร่วมสร้างความยั่งยืนให้โลกของเรา</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon-placeholder">💸</div>
+        <h4>คุ้มค่า</h4>
+        <p>ประหยัดกว่าซื้อ สวยได้ในทุกวัน โดยไม่ต้องจ่ายแพง</p>
+      </div>
     </div>
+  </div>
 </div>
-
-{# (Optional) Section for featured outfits or categories #}
-
 {% endblock %}
