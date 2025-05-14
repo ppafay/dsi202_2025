@@ -118,5 +118,13 @@ docker-compose exec web python manage.py createsuperuser
 
 ---
 
+
+---
+
+## 🎥 วิดีโอสาธิตการใช้งานระบบ  
+📺 [คลิกดูวิดีโอสาธิตการใช้งาน](https://youtu.be/-ECkwIFrOHk)
+
+---
+
 ## 📄 License
 This project is licensed under the MIT License.
